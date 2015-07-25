@@ -10,7 +10,7 @@ informations.
 - Displays the current status
 - Displays all cached scripts
 - Displays the settings
-- Possibility to secure the Dashboard by using basic HTTP Authentication
+- Possibility to secure the dashboard by using basic HTTP Authentication
 - Donut Charts for memory, keys and hits and restarts
 - Partition Layout Chart for scripts
 
