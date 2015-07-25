@@ -23,9 +23,8 @@ class IndexView
         return 'PHP ' . PHP_VERSION . " with OpCache {$this->configuration['version']['version']}";
     }
 
-    public function getStatusDataRows()
+    public function getStatus()
     {
-        $rows = array();
         foreach ($this->status as $key => $value) {
             if ($key === 'scripts') {
                 continue;
@@ -35,8 +34,7 @@ class IndexView
                 foreach ($value as $k => $v) {
                     if ($v === false) {
                         $value = 'false';
-                    }
-                    if ($v === true) {
+                    } elseif ($v === true) {
                         $value = 'true';
                     }
                     if ($k === 'used_memory' || $k === 'free_memory' || $k === 'wasted_memory') {
@@ -57,21 +55,17 @@ class IndexView
                     if (THOUSAND_SEPARATOR === true && is_int($v)) {
                         $value = number_format($v);
                     }
-
-                    $rows[] = "<tr><th>$k</th><td>$value</td></tr>\n";
+                    yield ["key" => $k, "value" => $value];
                 }
             } else {
                 if ($value === false) {
                     $value = 'false';
-                }
-                if ($value === true) {
+                } elseif ($value === true) {
                     $value = 'true';
                 }
-                $rows[] = "<tr><th>$key</th><td>$value</td></tr>\n";
+                yield ["key" => $key, "value" => $value];
             }
         }
-
-        return implode("\n", $rows);
     }
 
     public function getSettings()

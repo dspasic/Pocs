@@ -200,7 +200,12 @@
             <label for="tab-status">Status</label>
             <div class="content">
                 <table>
-                    <?php echo $view->getStatusDataRows(); ?>
+                    <?php foreach ($view->getStatus() as $row): ?>
+                       <tr>
+                           <th><?php echo $row['key'] ?></th>
+                           <td><?php echo $row['value'] ?></td>
+                       </tr>
+                    <?php endforeach ?>
                 </table>
             </div>
         </div>
