@@ -1,0 +1,12 @@
+{
+  "alias": "pocs.phar",
+  "output": "build/pocs.phar",
+  "main": "web/index.php",
+  "compression": "BZ2",
+  "directories": ["src", "Resources", "vendor", "web"],
+  "files": [
+    "LICENSE"
+  ],
+  "stub": true,
+  "web": true
+}

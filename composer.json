@@ -1,0 +1,27 @@
+{
+  "name": "pocs/pocs",
+  "description": "Procs stands for PHP Opcode Cache Status and provides a simple dashboard with some OpCache status information. ",
+  "keywords": ["opcode", "opcache", "cache", "dashboard"],
+  "homepage": "http://github.com/dspasic/pocs",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Dejan Spasic",
+      "email": "spasic.dejan@yahoo.de",
+      "homepage": "http://about.me/dejan.spasic"
+    }
+  ],
+  "support": {
+    "issue": "http://github.com/dspasic/pocs/issue",
+    "source": "http://github.com/dspasic/pocs"
+  },
+  "require": {
+    "php": ">5.6.0"
+  },
+  "autoload": {
+    "Pocs\\": ["src/"]
+  },
+  "config": {
+    "bin-dir": "bin"
+  }
+}
