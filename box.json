@@ -2,7 +2,7 @@
   "alias": "pocs.phar",
   "output": "build/pocs.phar",
   "main": "web/index.php",
-  "compression": "BZ2",
+  "compression": "NONE",
   "directories": ["src", "Resources", "vendor", "web"],
   "files": [
     "LICENSE"
