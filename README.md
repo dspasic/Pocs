@@ -25,4 +25,4 @@ You can contribute in one of three ways:
 
 # Credits
 
-The dashboard is a fork of the project [rlerdorf/opcache-status](https://github.com/rlerdorf/opcache-status).
+The Pocs is a fork of the project [rlerdorf/opcache-status](https://github.com/rlerdorf/opcache-status).
