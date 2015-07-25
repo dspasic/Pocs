@@ -1,11 +1,13 @@
 # Pocs
+
 Pocs stands for PHP Opcode Cache Status and provides a simple dashboard with some [OpCache](http://php.net/manual/en/book.opcache.php)
 informations.
 
 [![Pocs Dashboard](https://raw.githubusercontent.com/dspasic/Pocs/master/share/doc/images/pocs-dashboard.png)](https://raw.githubusercontent.com/dspasic/Pocs/master/share/doc/images/pocs-dashboard.png)
 
 ## Installing Pocs
-You just need to download the phar file and make it under HTTP available.
+
+You just need to download the phar file and request the file over HTTP.
 
 ```
 # curl -LSs https://github.com/dspasic/Pocs/releases/download/v0.0.1/pocs.phar > pocs.php
@@ -15,6 +17,7 @@ You just need to download the phar file and make it under HTTP available.
 Now open your favorite web client and type in the address bar [http://localhost:8081/pocs.php](http://localhost:8081/pocs.php).
 
 ## Secure Pocs
+
 To secure Pocs just create a `pocs.config.php` file in the same directory as the pocs.phar is stored and define the
 following constants. 
 
