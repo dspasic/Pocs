@@ -6,6 +6,27 @@ if (false === extension_loaded('Zend OPcache')) {
     die("Module Zend OPcache is not loaded");
 }
 
+$pocsConfigFile = str_replace(
+    'phar://',
+    '',
+    dirname(dirname(__DIR__)). '/pocs.config.php'
+);
+
+if (file_exists($pocsConfigFile)) {
+    include $pocsConfigFile;
+
+    if (defined('POCS_AUTH_USER') && defined('POCS_AUTH_PW')) {
+        $user = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : null;
+        $pass = isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : null;
+
+        if (false === (isset($user, $pass) && [POCS_AUTH_USER, POCS_AUTH_PW] === [$user, $pass])) {
+            header('WWW-Authenticate: Basic realm="My Realm"');
+            header('HTTP/1.0 401 Unauthorized');
+            die("Not authorized");
+        }
+    }
+}
+
 class IndexView
 {
     private $configuration;
