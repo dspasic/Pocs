@@ -210,8 +210,13 @@
             <label for="tab-config">Configuration</label>
             <div class="content">
                 <table>
-                    <?php echo $dataModel->getConfigDataRows(); ?>
-                </table>
+                    <?php foreach ($dataModel->getSettings() as $row): ?>
+                        <tr>
+                            <th><?php echo $row['config'] ?></th>
+                            <td><?php echo $row['value'] ?></td>
+                        </tr>
+                    <?php endforeach ?>
+                    </table>
             </div>
         </div>
 

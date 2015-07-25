@@ -40,45 +40,42 @@ class OpCacheDataModel
                         $value = 'true';
                     }
                     if ($k === 'used_memory' || $k === 'free_memory' || $k === 'wasted_memory') {
-                        $v = $this->_size_for_humans(
+                        $value = $this->_size_for_humans(
                             $v
                         );
-                    }
-                    if ($k === 'current_wasted_percentage' || $k === 'opcache_hit_rate') {
-                        $v = number_format(
+                    } elseif ($k === 'current_wasted_percentage' || $k === 'opcache_hit_rate') {
+                        $value = number_format(
                                 $v,
                                 2
                             ) . '%';
-                    }
-                    if ($k === 'blacklist_miss_ratio') {
-                        $v = number_format($v, 2) . '%';
-                    }
-                    if ($k === 'start_time' || $k === 'last_restart_time') {
-                        $v = ($v ? date(DATE_RFC822, $v) : 'never');
-                    }
-                    if (THOUSAND_SEPARATOR === true && is_int($v)) {
-                        $v = number_format($v);
+                    } elseif ($k === 'blacklist_miss_ratio') {
+                        $value = number_format($v, 2) . '%';
+                    } elseif ($k === 'start_time' || $k === 'last_restart_time') {
+                        $value = ($v ? date(DATE_RFC822, $v) : 'never');
                     }
 
-                    $rows[] = "<tr><th>$k</th><td>$v</td></tr>\n";
+                    if (THOUSAND_SEPARATOR === true && is_int($v)) {
+                        $value = number_format($v);
+                    }
+
+                    $rows[] = "<tr><th>$k</th><td>$value</td></tr>\n";
                 }
-                continue;
+            } else {
+                if ($value === false) {
+                    $value = 'false';
+                }
+                if ($value === true) {
+                    $value = 'true';
+                }
+                $rows[] = "<tr><th>$key</th><td>$value</td></tr>\n";
             }
-            if ($value === false) {
-                $value = 'false';
-            }
-            if ($value === true) {
-                $value = 'true';
-            }
-            $rows[] = "<tr><th>$key</th><td>$value</td></tr>\n";
         }
 
         return implode("\n", $rows);
     }
 
-    public function getConfigDataRows()
+    public function getSettings()
     {
-        $rows = array();
         foreach ($this->configuration['directives'] as $key => $value) {
             if ($value === false) {
                 $value = 'false';
@@ -89,10 +86,8 @@ class OpCacheDataModel
             if ($key == 'opcache.memory_consumption') {
                 $value = $this->_size_for_humans($value);
             }
-            $rows[] = "<tr><th>$key</th><td>$value</td></tr>\n";
+            yield ["config" => $key, "value" => $value];
         }
-
-        return implode("\n", $rows);
     }
 
     public function getScriptStatusRows()
