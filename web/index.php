@@ -289,7 +289,6 @@ class IndexView
         $array[array_shift($keys)] = $value;
         return $array;
     }
-
 }
 
 $view = new IndexView();
