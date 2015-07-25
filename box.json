@@ -1,16 +1,18 @@
 {
   "alias": "pocs.phar",
   "output": "build/pocs.phar",
-  "main": "web/index.php",
   "compression": "NONE",
-  "directories": ["src", "Resources", "vendor", "web"],
+  "directories": ["src", "share", "vendor", "web"],
   "files": [
     "LICENSE"
+  ],
+  "blacklist": [
+    "share/phar/stub.php"
   ],
   "replacements": {
     "version": "0.0.1"
   },
   "shebang": false,
-  "stub": true,
+  "stub": "share/phar/stub.php",
   "web": true
 }
