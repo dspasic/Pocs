@@ -7,6 +7,9 @@
   "files": [
     "LICENSE"
   ],
+  "replacements": {
+    "version": "0.0.1"
+  },
   "stub": true,
   "web": true
 }
