@@ -186,12 +186,12 @@
             }
         }
     </script>
-    <title><?php echo $dataModel->getPageTitle(); ?></title>
+    <title><?php echo $view->pageTitle(); ?></title>
 </head>
 
 <body>
 <div id="container">
-    <h1><?php echo $dataModel->getPageTitle(); ?></h1>
+    <h1><?php echo $view->pageTitle(); ?></h1>
 
     <div class="tabs">
 
@@ -200,7 +200,7 @@
             <label for="tab-status">Status</label>
             <div class="content">
                 <table>
-                    <?php echo $dataModel->getStatusDataRows(); ?>
+                    <?php echo $view->getStatusDataRows(); ?>
                 </table>
             </div>
         </div>
@@ -210,7 +210,7 @@
             <label for="tab-config">Configuration</label>
             <div class="content">
                 <table>
-                    <?php foreach ($dataModel->getSettings() as $row): ?>
+                    <?php foreach ($view->getSettings() as $row): ?>
                         <tr>
                             <th><?php echo $row['config'] ?></th>
                             <td><?php echo $row['value'] ?></td>
@@ -222,7 +222,7 @@
 
         <div class="tab">
             <input type="radio" id="tab-scripts" name="tab-group-1">
-            <label for="tab-scripts">Scripts (<?php echo $dataModel->getScriptStatusCount(); ?>)</label>
+            <label for="tab-scripts">Scripts (<?php echo $view->getScriptStatusCount(); ?>)</label>
             <div class="content">
                 <table style="font-size:0.8em;">
                     <tr>
@@ -230,7 +230,7 @@
                         <th width="20%">Memory</th>
                         <th width="70%">Path</th>
                     </tr>
-                    <?php echo $dataModel->getScriptStatusRows(); ?>
+                    <?php echo $view->getScriptStatusRows(); ?>
                 </table>
             </div>
         </div>
@@ -259,7 +259,7 @@
 <div id="partition"></div>
 
 <script>
-    var dataset = <?php echo $dataModel->getGraphDataSetJson(); ?>;
+    var dataset = <?php echo $view->getGraphDataSetJson(); ?>;
 
     var width = 400,
         height = 400,
@@ -293,10 +293,10 @@
     function set_text(t) {
         if (t === "memory") {
             d3.select("#stats").html(
-                "<table><tr><th style='background:#B41F1F;'>Used</th><td><?php echo $dataModel->getHumanUsedMemory()?></td></tr>"+
-                "<tr><th style='background:#1FB437;'>Free</th><td><?php echo $dataModel->getHumanFreeMemory()?></td></tr>"+
-                "<tr><th style='background:#ff7f0e;' rowspan=\"2\">Wasted</th><td><?php echo $dataModel->getHumanWastedMemory()?></td></tr>"+
-                "<tr><td><?php echo $dataModel->getWastedMemoryPercentage()?>%</td></tr></table>"
+                "<table><tr><th style='background:#B41F1F;'>Used</th><td><?php echo $view->getHumanUsedMemory()?></td></tr>"+
+                "<tr><th style='background:#1FB437;'>Free</th><td><?php echo $view->getHumanFreeMemory()?></td></tr>"+
+                "<tr><th style='background:#ff7f0e;' rowspan=\"2\">Wasted</th><td><?php echo $view->getHumanWastedMemory()?></td></tr>"+
+                "<tr><td><?php echo $view->getWastedMemoryPercentage()?>%</td></tr></table>"
             );
         } else if (t === "keys") {
             d3.select("#stats").html(
@@ -375,7 +375,7 @@
     var partition = d3.layout.partition()
         .value(function(d) { return d.size; });
 
-    root = JSON.parse('<?php echo json_encode($dataModel->getD3Scripts()); ?>');
+    root = JSON.parse('<?php echo json_encode($view->getD3Scripts()); ?>');
 
     var g = vis.selectAll("g")
         .data(partition.nodes(root))

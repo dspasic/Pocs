@@ -6,7 +6,7 @@ if (false === extension_loaded('Zend OPcache')) {
     die("Module Zend OPcache is not loaded");
 }
 
-class OpCacheDataModel
+class IndexView
 {
     private $configuration;
     private $status;
@@ -18,7 +18,7 @@ class OpCacheDataModel
         $this->status = opcache_get_status();
     }
 
-    public function getPageTitle()
+    public function pageTitle()
     {
         return 'PHP ' . PHP_VERSION . " with OpCache {$this->configuration['version']['version']}";
     }
@@ -277,6 +277,6 @@ class OpCacheDataModel
 
 }
 
-$dataModel = new OpCacheDataModel();
+$view = new IndexView();
 
 include dirname(__DIR__) . '/share/templates/layout.php';
