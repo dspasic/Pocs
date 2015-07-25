@@ -2,7 +2,7 @@
 Pocs stands for PHP Opcode Cache Status and provides a simple dashboard with some [OpCache](http://php.net/manual/en/book.opcache.php)
 informations.
 
-[![Pocs Dashboard](https://raw.githubusercontent.com/dspasic/Pocs/share/doc/images/pocs-dashboard.png)](https://raw.githubusercontent.com/dspasic/Pocs/share/doc/images/pocs-dashboard.png)
+[![Pocs Dashboard](https://raw.githubusercontent.com/dspasic/Pocs/master/share/doc/images/pocs-dashboard.png)](https://raw.githubusercontent.com/dspasic/Pocs/master/share/doc/images/pocs-dashboard.png)
 
 ## Secure Pocs
 To secure Pocs just create a `pocs.config.php` file in the same directory as the pocs.phar is stored and define the
