@@ -4,6 +4,16 @@ informations.
 
 [![Pocs Dashboard](https://raw.githubusercontent.com/dspasic/Pocs/master/share/doc/images/pocs-dashboard.png)](https://raw.githubusercontent.com/dspasic/Pocs/master/share/doc/images/pocs-dashboard.png)
 
+## Installing Pocs
+You just need to download the phar file and make it under HTTP available.
+
+```
+# curl -LSs https://github.com/dspasic/Pocs/releases/download/v0.0.1/pocs.phar > pocs.php
+# php -S localhost:8081
+```
+
+Now open your favorite web client and type in the address bar [http://localhost:8081](http://localhost:8081).
+
 ## Secure Pocs
 To secure Pocs just create a `pocs.config.php` file in the same directory as the pocs.phar is stored and define the
 following constants. 
