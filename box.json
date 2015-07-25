@@ -10,6 +10,7 @@
   "replacements": {
     "version": "0.0.1"
   },
+  "shebang": false,
   "stub": true,
   "web": true
 }
