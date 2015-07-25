@@ -79,8 +79,7 @@ class OpCacheDataModel
         foreach ($this->configuration['directives'] as $key => $value) {
             if ($value === false) {
                 $value = 'false';
-            }
-            if ($value === true) {
+            } elseif ($value === true) {
                 $value = 'true';
             }
             if ($key == 'opcache.memory_consumption') {
