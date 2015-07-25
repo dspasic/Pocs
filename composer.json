@@ -1,6 +1,6 @@
 {
   "name": "pocs/pocs",
-  "description": "Procs stands for PHP Opcode Cache Status and provides a simple dashboard with some OpCache status information. ",
+  "description": "Procs stands for PHP Opcode Cache Status and provides a simple dashboard with some OpCache information. ",
   "keywords": ["opcode", "opcache", "cache", "dashboard"],
   "homepage": "http://github.com/dspasic/pocs",
   "license": "MIT",
