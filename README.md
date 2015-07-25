@@ -5,6 +5,15 @@ informations.
 
 [![Pocs Dashboard](https://raw.githubusercontent.com/dspasic/Pocs/master/share/doc/images/pocs-dashboard.png)](https://raw.githubusercontent.com/dspasic/Pocs/master/share/doc/images/pocs-dashboard.png)
 
+## Features
+
+- Displays the current status
+- Displays all cached scripts
+- Displays the settings
+- Possibility to secure the Dashboard by using basic HTTP Authentication
+- Donut Charts for memory, keys and hits and restarts
+- Partition Layout Chart for scripts
+
 ## Installing Pocs
 
 You just need to download the phar file and request the file over HTTP.
