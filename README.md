@@ -10,3 +10,13 @@ following constants.
 define('POCS_AUTH_USER', 'USERNAME');
 define('POCS_AUTH_PW', 'PASSWORD');
 ```
+
+## Contributing
+
+You can contribute in one of three ways:
+
+1. File bug reports using the [issue tracker](https://github.com/dspasic/Pocs/issues).
+2. Answer questions or fix bugs on the issue tracker.
+3. Contribute new features or update the wiki.
+
+> The code contribution process is not very formal. You just need to make sure that you follow the PSR-0, PSR-1, and PSR-2 coding guidelines. Any new code contributions must be accompanied by unit tests where applicable.
