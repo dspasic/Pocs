@@ -12,7 +12,7 @@ You just need to download the phar file and make it under HTTP available.
 # php -S localhost:8081
 ```
 
-Now open your favorite web client and type in the address bar [http://localhost:8081](http://localhost:8081).
+Now open your favorite web client and type in the address bar [http://localhost:8081/pocs.php](http://localhost:8081/pocs.php).
 
 ## Secure Pocs
 To secure Pocs just create a `pocs.config.php` file in the same directory as the pocs.phar is stored and define the
