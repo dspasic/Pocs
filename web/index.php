@@ -20,9 +20,8 @@ if (file_exists($pocsConfigFile)) {
         $pass = isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : null;
 
         if (false === (isset($user, $pass) && [POCS_AUTH_USER, POCS_AUTH_PW] === [$user, $pass])) {
-            header('WWW-Authenticate: Basic realm="My Realm"');
-            header('HTTP/1.0 401 Unauthorized');
-            die("Not authorized");
+            include dirname(__DIR__) . '/share/templates/401.php';
+            exit;
         }
     }
 }
@@ -293,4 +292,4 @@ class IndexView
 
 $view = new IndexView();
 
-include dirname(__DIR__) . '/share/templates/layout.php';
+include dirname(__DIR__) . '/share/templates/index.php';
