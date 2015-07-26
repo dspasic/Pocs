@@ -128,31 +128,41 @@ class IndexView
         $rows = array();
         foreach ($dirs as $dir => $files) {
             $count = count($files);
-            $file_plural = $count > 1 ? 's' : null;
+            $filePlural = $count > 1 ? 's' : null;
             $m = 0;
             foreach ($files as $file => $data) {
                 $m += $data["memory_consumption"];
             }
             $m = $this->_size_for_humans($m);
 
-            if ($count > 1) {
-                $rows[] = '<tr>';
-                $rows[] = "<th class=\"clickable\" id=\"head-{$id}\" colspan=\"3\" onclick=\"toggleVisible('#head-{$id}', '#row-{$id}')\">{$dir} ({$count} file{$file_plural}, {$m})</th>";
-                $rows[] = '</tr>';
-            }
-
-            foreach ($files as $file => $data) {
-                $rows[] = "<tr id=\"row-{$id}\">";
-                $rows[] = "<td>" . $this->_format_value($data["hits"]) . "</td>";
-                $rows[] = "<td>" . $this->_size_for_humans($data["memory_consumption"]) . "</td>";
-                $rows[] = $count > 1 ? "<td>{$file}</td>" : "<td>{$dir}/{$file}</td>";
-                $rows[] = '</tr>';
-            }
+            $row = [
+                'id' => $id,
+                'count' => $count,
+                'dir' => $dir,
+                'file_plural' => $filePlural,
+                'total_memory_consumption' => \Closure::bind(function () use ($files) {
+                    return $this->_size_for_humans(
+                        array_sum(array_map(function($data) {
+                            return $data['memory_consumption'];
+                        }, $files))
+                    );
+                }, $this),
+                'files' => \Closure::bind(function () use ($files) {
+                    foreach ($files as $file => $data) {
+                        $row = [
+                            'file' => $file,
+                            'hits' => $this->_format_value($data['hits']),
+                            'memory_consumption' => $this->_size_for_humans($data['memory_consumption'])
+                        ];
+                        yield $row;
+                    }
+                }, $this),
+            ];
 
             ++$id;
-        }
 
-        return implode("\n", $rows);
+            yield $row;
+        }
     }
 
     public function getScriptStatusCount()

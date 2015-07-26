@@ -42,7 +42,29 @@ ob_start();
                         <th width="20%">Memory</th>
                         <th width="70%">Path</th>
                     </tr>
-                    <?php echo $view->getScriptStatusRows(); ?>
+
+                    <?php foreach ($view->getScriptStatusRows() as $row): ?>
+                            <?php if ($row['count'] > 1): ?>
+                                <tr>
+                                    <th colspan="3"
+                                        class="clickable"
+                                        id="head-<?php echo $row['id'] ?>"
+                                        onclick="toggleVisible('#head-<?php echo $row['id'] ?>', '#row-<?php echo $row['id'] ?>)">
+                                        <?php echo $row['dir'] . '  (' . $row['count'] . ' file' . $row['file_plural']
+                                            . ' ' . $row['total_memory_consumption']() . ')' ?>
+                                    </th>
+                                </tr>
+                            <?php endif ?>
+                            <?php foreach($row['files']() as $file): ?>
+                                <tr id="row-<?php echo $row['id']  ?>">
+                                    <td><?php echo $file['hits'] ?></td>
+                                    <td><?php echo $file['memory_consumption'] ?></td>
+                                    <td><?php $row['count'] > 1 AND print $row['dir'] . '/' ?><?php echo $file['file'] ?></td>
+
+                                </tr>
+                            <?php endforeach ?>
+
+                    <?php endforeach ?>
                 </table>
             </div>
         </div>
