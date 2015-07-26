@@ -10,7 +10,7 @@
     "share/phar/stub.php"
   ],
   "replacements": {
-    "version": "0.0.1"
+    "version": "0.0.2"
   },
   "shebang": false,
   "stub": "share/phar/stub.php",
