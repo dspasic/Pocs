@@ -123,23 +123,14 @@ class IndexView
         }
 
         $this->d3Scripts = $this->_processPartition($this->d3Scripts, $basename);
-        $id = 1;
 
-        $rows = array();
+        $id = 0;
         foreach ($dirs as $dir => $files) {
-            $count = count($files);
-            $filePlural = $count > 1 ? 's' : null;
-            $m = 0;
-            foreach ($files as $file => $data) {
-                $m += $data["memory_consumption"];
-            }
-            $m = $this->_size_for_humans($m);
-
             $row = [
-                'id' => $id,
-                'count' => $count,
+                'id' => ++$id,
+                'count' => count($files),
                 'dir' => $dir,
-                'file_plural' => $filePlural,
+                'file_plural' => count($files) > 1 ? 's' : null,
                 'total_memory_consumption' => \Closure::bind(function () use ($files) {
                     return $this->_size_for_humans(
                         array_sum(array_map(function($data) {
@@ -158,9 +149,6 @@ class IndexView
                     }
                 }, $this),
             ];
-
-            ++$id;
-
             yield $row;
         }
     }
