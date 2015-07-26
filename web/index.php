@@ -58,7 +58,7 @@ class IndexView
                         $value = 'true';
                     }
                     if ($k === 'used_memory' || $k === 'free_memory' || $k === 'wasted_memory') {
-                        $value = $this->_size_for_humans(
+                        $value = $this->sizeForHumans(
                             $v
                         );
                     } elseif ($k === 'current_wasted_percentage' || $k === 'opcache_hit_rate') {
@@ -97,7 +97,7 @@ class IndexView
                 $value = 'true';
             }
             if ($key == 'opcache.memory_consumption') {
-                $value = $this->_size_for_humans($value);
+                $value = $this->sizeForHumans($value);
             }
             yield ["config" => $key, "value" => $value];
         }
@@ -107,7 +107,7 @@ class IndexView
     {
         foreach ($this->status['scripts'] as $key => $data) {
             $dirs[dirname($key)][basename($key)] = $data;
-            $this->_arrayPset($this->d3Scripts, $key, array(
+            $this->arrayPset($this->d3Scripts, $key, array(
                 'name' => basename($key),
                 'size' => $data['memory_consumption'],
             ));
@@ -122,7 +122,7 @@ class IndexView
             $this->d3Scripts = reset($this->d3Scripts);
         }
 
-        $this->d3Scripts = $this->_processPartition($this->d3Scripts, $basename);
+        $this->d3Scripts = $this->processPartition($this->d3Scripts, $basename);
 
         $id = 0;
         foreach ($dirs as $dir => $files) {
@@ -132,7 +132,7 @@ class IndexView
                 'dir' => $dir,
                 'file_plural' => count($files) > 1 ? 's' : null,
                 'total_memory_consumption' => \Closure::bind(function () use ($files) {
-                    return $this->_size_for_humans(
+                    return $this->sizeForHumans(
                         array_sum(array_map(function($data) {
                             return $data['memory_consumption'];
                         }, $files))
@@ -142,8 +142,8 @@ class IndexView
                     foreach ($files as $file => $data) {
                         $row = [
                             'file' => $file,
-                            'hits' => $this->_format_value($data['hits']),
-                            'memory_consumption' => $this->_size_for_humans($data['memory_consumption'])
+                            'hits' => $this->formatValue($data['hits']),
+                            'memory_consumption' => $this->sizeForHumans($data['memory_consumption'])
                         ];
                         yield $row;
                     }
@@ -196,17 +196,17 @@ class IndexView
 
     public function getHumanUsedMemory()
     {
-        return $this->_size_for_humans($this->getUsedMemory());
+        return $this->sizeForHumans($this->getUsedMemory());
     }
 
     public function getHumanFreeMemory()
     {
-        return $this->_size_for_humans($this->getFreeMemory());
+        return $this->sizeForHumans($this->getFreeMemory());
     }
 
     public function getHumanWastedMemory()
     {
-        return $this->_size_for_humans($this->getWastedMemory());
+        return $this->sizeForHumans($this->getWastedMemory());
     }
 
     public function getUsedMemory()
@@ -234,7 +234,7 @@ class IndexView
         return $this->d3Scripts;
     }
 
-    private function _processPartition($value, $name = null)
+    private function processPartition($value, $name = null)
     {
         if (array_key_exists('size', $value)) {
             return $value;
@@ -243,13 +243,13 @@ class IndexView
         $array = array('name' => $name,'children' => array());
 
         foreach ($value as $k => $v) {
-            $array['children'][] = $this->_processPartition($v, $k);
+            $array['children'][] = $this->processPartition($v, $k);
         }
 
         return $array;
     }
 
-    private function _format_value($value)
+    private function formatValue($value)
     {
         if (THOUSAND_SEPARATOR === true) {
             return number_format($value);
@@ -258,7 +258,7 @@ class IndexView
         }
     }
 
-    private function _size_for_humans($bytes)
+    private function sizeForHumans($bytes)
     {
         if ($bytes > 1048576) {
             return sprintf('%.2f&nbsp;MB', $bytes / 1048576);
@@ -271,8 +271,7 @@ class IndexView
         }
     }
 
-    // Borrowed from Laravel
-    private function _arrayPset(&$array, $key, $value)
+    private function arrayPset(&$array, $key, $value)
     {
         if (is_null($key)) return $array = $value;
         $keys = explode(DIRECTORY_SEPARATOR, ltrim($key, DIRECTORY_SEPARATOR));
