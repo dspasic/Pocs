@@ -35,6 +35,11 @@ define('POCS_AUTH_USER', 'USERNAME');
 define('POCS_AUTH_PW', 'PASSWORD');
 ```
 
+## Requirements
+
+- PHP 5.6.0+ or newer
+- PHP intl (Optional)
+
 ## Contributing
 
 You can contribute in one of three ways:
