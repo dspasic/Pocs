@@ -122,7 +122,7 @@ class IndexView
 
         $basename = '';
         while (true) {
-            if (count($this->d3Scripts) !=1) break;
+            if (count($this->d3Scripts) != 1) break;
             $basename .= DIRECTORY_SEPARATOR . key($this->d3Scripts);
             $this->d3Scripts = reset($this->d3Scripts);
         }
@@ -150,10 +150,12 @@ class IndexView
                             'hits' => $this->formatValue($data['hits']),
                             'memory_consumption' => $this->sizeForHumans($data['memory_consumption'])
                         ];
+
                         yield $row;
                     }
                 }, $this),
             ];
+
             yield $row;
         }
     }
