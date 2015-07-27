@@ -20,7 +20,7 @@
     "php": ">5.6.0"
   },
   "autoload": {
-    "psr-4": {"Pocs\\": "src/"}
+    "psr-4": {"Pocs\\": "src/Pocs"}
   },
   "config": {
     "bin-dir": "bin"
