@@ -1,5 +1,7 @@
 <?php
 
+require dirname(__DIR__) . '/vendor/autoload.php';
+
 define('THOUSAND_SEPARATOR', true);
 
 if (false === extension_loaded('Zend OPcache')) {
@@ -34,8 +36,9 @@ class IndexView
 
     public function __construct()
     {
-        $this->configuration = opcache_get_configuration();
-        $this->status = opcache_get_status();
+        $this->configuration = new \Pocs\OpCache\Configuration();
+        $this->status = new \Pocs\OpCache\Status();
+        $this->helper = new \Pocs\View\ViewHelper();
     }
 
     public function pageTitle()
@@ -53,29 +56,30 @@ class IndexView
             if (is_array($value)) {
                 foreach ($value as $k => $v) {
                     if ($v === false) {
-                        $value = 'false';
+                        $v = 'false';
                     } elseif ($v === true) {
-                        $value = 'true';
+                        $v = 'true';
                     }
                     if ($k === 'used_memory' || $k === 'free_memory' || $k === 'wasted_memory') {
-                        $value = $this->sizeForHumans(
+                        $v = $this->sizeForHumans(
                             $v
                         );
                     } elseif ($k === 'current_wasted_percentage' || $k === 'opcache_hit_rate') {
-                        $value = number_format(
+                        $v = number_format(
                                 $v,
                                 2
                             ) . '%';
                     } elseif ($k === 'blacklist_miss_ratio') {
-                        $value = number_format($v, 2) . '%';
+                        $v = number_format($v, 2) . '%';
                     } elseif ($k === 'start_time' || $k === 'last_restart_time') {
-                        $value = ($v ? date(DATE_RFC822, $v) : 'never');
+                        $v = ($v ? date(DATE_RFC822, $v) : 'never');
                     }
 
                     if (THOUSAND_SEPARATOR === true && is_int($v)) {
-                        $value = number_format($v);
+                        $v = number_format($v);
                     }
-                    yield ["key" => $k, "value" => $value];
+
+                    yield ["key" => $k, "value" => $v];
                 }
             } else {
                 if ($value === false) {
@@ -83,6 +87,7 @@ class IndexView
                 } elseif ($value === true) {
                     $value = 'true';
                 }
+
                 yield ["key" => $key, "value" => $value];
             }
         }
@@ -251,24 +256,12 @@ class IndexView
 
     private function formatValue($value)
     {
-        if (THOUSAND_SEPARATOR === true) {
-            return number_format($value);
-        } else {
-            return $value;
-        }
+        return $this->helper->formatNumber($value);
     }
 
     private function sizeForHumans($bytes)
     {
-        if ($bytes > 1048576) {
-            return sprintf('%.2f&nbsp;MB', $bytes / 1048576);
-        } else {
-            if ($bytes > 1024) {
-                return sprintf('%.2f&nbsp;kB', $bytes / 1024);
-            } else {
-                return sprintf('%d&nbsp;bytes', $bytes);
-            }
-        }
+        return $this->helper->sizeForHumans($bytes);
     }
 
     private function arrayPset(&$array, $key, $value)
