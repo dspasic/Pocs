@@ -29,7 +29,7 @@ class ViewHelper
     {
         if (class_exists('NumberFormatter')) {
             $a = new \NumberFormatter("en-US", \NumberFormatter::DECIMAL);
-            echo $a->format($number);
+            return $a->format($number);
         }
 
         return $number;
