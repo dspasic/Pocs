@@ -36,7 +36,7 @@ ob_start();
             <input type="radio" id="tab-scripts" name="tab-group-1">
             <label for="tab-scripts">Scripts (<?php echo $view->getScriptStatusCount(); ?>)</label>
             <div class="content">
-                <table style="font-size:0.8em;">
+                <table id="data-grid-scripts" style="font-size:0.8em;">
                     <tr>
                         <th width="10%">Hits</th>
                         <th width="20%">Memory</th>
@@ -44,17 +44,19 @@ ob_start();
                     </tr>
 
                     <?php foreach ($view->getScriptStatusRows() as $row): ?>
+
                             <?php if ($row['count'] > 1): ?>
                                 <tr>
                                     <th colspan="3"
                                         class="clickable"
                                         id="head-<?php echo $row['id'] ?>"
-                                        onclick="toggleVisible('#head-<?php echo $row['id'] ?>', '#row-<?php echo $row['id'] ?>)">
+                                        data-toggle-visible="<?php echo $row['id'] ?>">
                                         <?php echo $row['dir'] . '  (' . $row['count'] . ' file' . $row['file_plural']
                                             . ' ' . $row['total_memory_consumption']() . ')' ?>
                                     </th>
                                 </tr>
                             <?php endif ?>
+
                             <?php foreach($row['files']() as $file): ?>
                                 <tr id="row-<?php echo $row['id']  ?>">
                                     <td><?php echo $file['hits'] ?></td>
@@ -95,19 +97,6 @@ ob_start();
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.0.1/d3.v3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script>
-        var hidden = {};
-        function toggleVisible(head, row) {
-            if (!hidden[row]) {
-                d3.selectAll(row).transition().style('display', 'none');
-                hidden[row] = true;
-                d3.select(head).transition().style('color', '#ccc');
-            } else {
-                d3.selectAll(row).transition().style('display');
-                hidden[row] = false;
-                d3.select(head).transition().style('color', '#000');
-            }
-        }
-
         var dataset = <?php echo $view->getGraphDataSetJson(); ?>;
 
         var width = 400,
@@ -167,13 +156,17 @@ ob_start();
         }
 
         function change() {
+            if (typeof dataset[this.value] === 'undefined') {
+                return;
+            }
+
             // Filter out any zero values to see if there is anything left
             var remove_zero_values = dataset[this.value].filter(function(value) {
                 return value > 0;
             });
 
             // Skip if the value is undefined for some reason
-            if (typeof dataset[this.value] !== 'undefined' && remove_zero_values.length > 0) {
+            if (remove_zero_values.length > 0) {
                 $('#graph').find('> svg').show();
                 path = path.data(pie(dataset[this.value])); // update the data
                 path.transition().duration(750).attrTween("d", arcTween); // redraw the arcs
@@ -294,6 +287,23 @@ ob_start();
                 if (e.keyCode == 27) handleVisualisationToggle(true);
             });
 
+            var hidden = {};
+            function toggleVisible(head, row) {
+                if (!hidden[row]) {
+                    d3.selectAll(row).transition().style('display', 'none');
+                    hidden[row] = true;
+                    d3.select(head).transition().style('color', '#ccc');
+                } else {
+                    d3.selectAll(row).transition().style('display');
+                    hidden[row] = false;
+                    d3.select(head).transition().style('color', '#000');
+                }
+            }
+
+            $('th[data-toggle-visible]', '#data-grid-scripts').on('click', function () {
+                var id = $(this).data('toggle-visible');
+                toggleVisible('#head-' + id, '#row-' + id);
+            });
         });
     </script>
 <?php
