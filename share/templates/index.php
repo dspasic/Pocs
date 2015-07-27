@@ -8,10 +8,16 @@ ob_start();
             <div class="content">
                 <table>
                     <?php foreach ($view->getStatus() as $row): ?>
-                       <tr>
-                           <th><?php echo $row['key'] ?></th>
-                           <td><?php echo $row['value'] ?></td>
-                       </tr>
+                        <?php if (isset($row['section'])): ?>
+                            <tr>
+                                <th colspan="2"><?php echo $row['key'] ?></th>
+                            </tr>
+                       <?php else: ?>
+                            <tr>
+                                <th><?php echo $row['key'] ?></th>
+                                <td><?php echo $row['value'] ?></td>
+                            </tr>
+                        <?php endif; ?>
                     <?php endforeach ?>
                 </table>
             </div>

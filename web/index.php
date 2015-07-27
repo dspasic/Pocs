@@ -43,7 +43,9 @@ class IndexView
 
     public function pageTitle()
     {
-        return 'PHP ' . PHP_VERSION . " with OpCache {$this->configuration['version']['version']}";
+        return 'PHP ' . PHP_VERSION . " with
+            {$this->configuration['version']['opcache_product_name']}
+            {$this->configuration['version']['version']}";
     }
 
     public function getStatus()
@@ -54,6 +56,8 @@ class IndexView
             }
 
             if (is_array($value)) {
+                yield ["key" => $key, "section" => true];
+
                 foreach ($value as $k => $v) {
                     if ($v === false) {
                         $v = 'false';
