@@ -17,7 +17,8 @@
     "source": "http://github.com/dspasic/pocs"
   },
   "require": {
-    "php": ">5.6.0"
+    "php": ">5.6.0",
+    "nikic/fast-route": "*"
   },
   "autoload": {
     "psr-4": {"Pocs\\": "src/Pocs"}

@@ -2,7 +2,6 @@
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-define('THOUSAND_SEPARATOR', true);
 
 if (false === extension_loaded('Zend OPcache')) {
     die("Module Zend OPcache is not loaded");
@@ -28,264 +27,39 @@ if (file_exists($pocsConfigFile)) {
     }
 }
 
-class IndexView
-{
-    private $configuration;
-    private $status;
-    private $d3Scripts = array();
+$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
+    $r->addRoute('GET', '/', 'home');
+//    $r->addRoute('GET', '/user/{id:\d+}', 'handler1');
+//    $r->addRoute('GET', '/user/{id:\d+}/{name}', 'handler2');
+});
 
-    public function __construct()
-    {
-        $this->configuration = new \Pocs\OpCache\Configuration();
-        $this->status = new \Pocs\OpCache\Status();
-        $this->helper = new \Pocs\View\ViewHelper();
-    }
+$strip = $_SERVER['SCRIPT_NAME'] . $_SERVER['PATH_INFO'];
+$uri = str_replace($strip, '', $_SERVER['REQUEST_URI']);
+if (empty($uri)) {
+    $uri = '/';
+}
+$routeInfo = $dispatcher->dispatch($_SERVER['REQUEST_METHOD'], $uri);
 
-    public function pageTitle()
-    {
-        return 'PHP ' . PHP_VERSION . " with
-            {$this->configuration['version']['opcache_product_name']}
-            {$this->configuration['version']['version']}";
-    }
-
-    public function getStatus()
-    {
-        foreach ($this->status as $key => $value) {
-            if ($key === 'scripts') {
-                continue;
-            }
-
-            if (is_array($value)) {
-                yield ["key" => $key, "section" => true];
-
-                foreach ($value as $k => $v) {
-                    if ($v === false) {
-                        $v = 'false';
-                    } elseif ($v === true) {
-                        $v = 'true';
-                    }
-                    if ($k === 'used_memory' || $k === 'free_memory' || $k === 'wasted_memory') {
-                        $v = $this->sizeForHumans(
-                            $v
-                        );
-                    } elseif ($k === 'current_wasted_percentage' || $k === 'opcache_hit_rate') {
-                        $v = number_format(
-                                $v,
-                                2
-                            ) . '%';
-                    } elseif ($k === 'blacklist_miss_ratio') {
-                        $v = number_format($v, 2) . '%';
-                    } elseif ($k === 'start_time' || $k === 'last_restart_time') {
-                        $v = ($v ? date(DATE_RFC822, $v) : 'never');
-                    }
-
-                    if (THOUSAND_SEPARATOR === true && is_int($v)) {
-                        $v = number_format($v);
-                    }
-
-                    yield ["key" => $k, "value" => $v];
-                }
-            } else {
-                if ($value === false) {
-                    $value = 'false';
-                } elseif ($value === true) {
-                    $value = 'true';
-                }
-
-                yield ["key" => $key, "value" => $value];
-            }
-        }
-    }
-
-    public function getSettings()
-    {
-        foreach ($this->configuration['directives'] as $key => $value) {
-            if ($value === false) {
-                $value = 'false';
-            } elseif ($value === true) {
-                $value = 'true';
-            }
-            if ($key == 'opcache.memory_consumption') {
-                $value = $this->sizeForHumans($value);
-            }
-            yield ["config" => $key, "value" => $value];
-        }
-    }
-
-    public function getScriptStatusRows()
-    {
-        foreach ($this->status['scripts'] as $key => $data) {
-            $dirs[dirname($key)][basename($key)] = $data;
-            $this->arrayPset($this->d3Scripts, $key, array(
-                'name' => basename($key),
-                'size' => $data['memory_consumption'],
-            ));
-        }
-
-        asort($dirs);
-
-        $basename = '';
-        while (true) {
-            if (count($this->d3Scripts) != 1) break;
-            $basename .= DIRECTORY_SEPARATOR . key($this->d3Scripts);
-            $this->d3Scripts = reset($this->d3Scripts);
-        }
-
-        $this->d3Scripts = $this->processPartition($this->d3Scripts, $basename);
-
-        $id = 0;
-        foreach ($dirs as $dir => $files) {
-            $row = [
-                'id' => ++$id,
-                'count' => count($files),
-                'dir' => $dir,
-                'file_plural' => count($files) > 1 ? 's' : null,
-                'total_memory_consumption' => \Closure::bind(function () use ($files) {
-                    return $this->sizeForHumans(
-                        array_sum(array_map(function($data) {
-                            return $data['memory_consumption'];
-                        }, $files))
-                    );
-                }, $this),
-                'files' => \Closure::bind(function () use ($files) {
-                    foreach ($files as $file => $data) {
-                        $row = [
-                            'file' => $file,
-                            'hits' => $this->formatValue($data['hits']),
-                            'memory_consumption' => $this->sizeForHumans($data['memory_consumption'])
-                        ];
-
-                        yield $row;
-                    }
-                }, $this),
-            ];
-
-            yield $row;
-        }
-    }
-
-    public function getScriptStatusCount()
-    {
-        return count($this->status["scripts"]);
-    }
-
-    public function getGraphDataSetJson()
-    {
-        $dataset = array();
-        $dataset['memory'] = array(
-            $this->status['memory_usage']['used_memory'],
-            $this->status['memory_usage']['free_memory'],
-            $this->status['memory_usage']['wasted_memory'],
-        );
-
-        $dataset['keys'] = array(
-            $this->status['opcache_statistics']['num_cached_keys'],
-            $this->status['opcache_statistics']['max_cached_keys'] - $this->status['opcache_statistics']['num_cached_keys'],
-            0
-        );
-
-        $dataset['hits'] = array(
-            $this->status['opcache_statistics']['misses'],
-            $this->status['opcache_statistics']['hits'],
-            0,
-        );
-
-        $dataset['restarts'] = array(
-            $this->status['opcache_statistics']['oom_restarts'],
-            $this->status['opcache_statistics']['manual_restarts'],
-            $this->status['opcache_statistics']['hash_restarts'],
-        );
-
-        if (THOUSAND_SEPARATOR === true) {
-            $dataset['TSEP'] = 1;
-        } else {
-            $dataset['TSEP'] = 0;
-        }
-
-        return json_encode($dataset);
-    }
-
-    public function getHumanUsedMemory()
-    {
-        return $this->sizeForHumans($this->getUsedMemory());
-    }
-
-    public function getHumanFreeMemory()
-    {
-        return $this->sizeForHumans($this->getFreeMemory());
-    }
-
-    public function getHumanWastedMemory()
-    {
-        return $this->sizeForHumans($this->getWastedMemory());
-    }
-
-    public function getUsedMemory()
-    {
-        return $this->status['memory_usage']['used_memory'];
-    }
-
-    public function getFreeMemory()
-    {
-        return $this->status['memory_usage']['free_memory'];
-    }
-
-    public function getWastedMemory()
-    {
-        return $this->status['memory_usage']['wasted_memory'];
-    }
-
-    public function getWastedMemoryPercentage()
-    {
-        return number_format($this->status['memory_usage']['current_wasted_percentage'], 2);
-    }
-
-    public function getD3Scripts()
-    {
-        return $this->d3Scripts;
-    }
-
-    private function processPartition($value, $name = null)
-    {
-        if (array_key_exists('size', $value)) {
-            return $value;
-        }
-
-        $array = array('name' => $name,'children' => array());
-
-        foreach ($value as $k => $v) {
-            $array['children'][] = $this->processPartition($v, $k);
-        }
-
-        return $array;
-    }
-
-    private function formatValue($value)
-    {
-        return $this->helper->formatNumber($value);
-    }
-
-    private function sizeForHumans($bytes)
-    {
-        return $this->helper->sizeForHumans($bytes);
-    }
-
-    private function arrayPset(&$array, $key, $value)
-    {
-        if (is_null($key)) return $array = $value;
-        $keys = explode(DIRECTORY_SEPARATOR, ltrim($key, DIRECTORY_SEPARATOR));
-        while (count($keys) > 1) {
-            $key = array_shift($keys);
-            if ( ! isset($array[$key]) || ! is_array($array[$key])) {
-                $array[$key] = array();
-            }
-            $array =& $array[$key];
-        }
-        $array[array_shift($keys)] = $value;
-        return $array;
-    }
+switch ($routeInfo[0]) {
+    case FastRoute\Dispatcher::NOT_FOUND:
+        // ... 404 Not Found
+        break;
+    case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
+        $allowedMethods = $routeInfo[1];
+        methodNotAllowed($allowedMethods);
+        break;
+    case FastRoute\Dispatcher::FOUND:
+        $routeInfo[1](...$routeInfo[2]);
+        break;
 }
 
-$view = new IndexView();
+function home()
+{
+    include dirname(__DIR__) . '/share/templates/index.php';
+}
 
-include dirname(__DIR__) . '/share/templates/index.php';
+function methodNotAllowed(array $allowedMethods)
+{
+    http_response_code(405);
+    echo '<p>Allowed methods are [' . implode(',', $allowedMethods) . ']</p>';
+}
