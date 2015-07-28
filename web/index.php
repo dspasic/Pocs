@@ -2,7 +2,6 @@
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-
 if (false === extension_loaded('Zend OPcache')) {
     die("Module Zend OPcache is not loaded");
 }
@@ -29,8 +28,6 @@ if (file_exists($pocsConfigFile)) {
 
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/', 'home');
-//    $r->addRoute('GET', '/user/{id:\d+}', 'handler1');
-//    $r->addRoute('GET', '/user/{id:\d+}/{name}', 'handler2');
 });
 
 $strip = $_SERVER['SCRIPT_NAME'] . $_SERVER['PATH_INFO'];

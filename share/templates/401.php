@@ -7,6 +7,7 @@ class NoAuthView
     }
 }
 
+$view = new NoAuthView();
 ob_start();
 ?>
 <p>
@@ -17,7 +18,5 @@ $content = ob_get_clean();
 
 header('WWW-Authenticate: Basic realm="Pocs"');
 http_response_code(401);
-
-$view = new NoAuthView();
 
 include __DIR__ . '/layout.php';
