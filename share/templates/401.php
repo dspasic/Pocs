@@ -16,7 +16,4 @@ ob_start();
 <?php
 $content = ob_get_clean();
 
-header('WWW-Authenticate: Basic realm="Pocs"');
-http_response_code(401);
-
 include __DIR__ . '/layout.php';
