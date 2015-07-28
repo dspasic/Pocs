@@ -31,7 +31,7 @@ class FrontController
 
     public function dispatch()
     {
-        $skip = $_SERVER['SCRIPT_NAME'] . $_SERVER['PATH_INFO'];
+        $skip = $_SERVER['SCRIPT_NAME'] . '/web/index.php';
         $uri = str_replace($skip, '', $_SERVER['REQUEST_URI']);
         if (empty($uri)) {
             $uri = '/';

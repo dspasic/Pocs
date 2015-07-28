@@ -11,6 +11,18 @@ function home()
     include dirname(__DIR__) . '/share/templates/index.php';
 }
 
+function handleConfiguration()
+{
+    header('Content-Type: application/json');
+    echo json_encode((new \Pocs\OpCache\Configuration())->getArrayCopy());
+}
+
+function handleStatus()
+{
+    header('Content-Type: application/json');
+    echo json_encode((new \Pocs\OpCache\Status())->getArrayCopy());
+}
+
 function handleHttpException(\Pocs\Exception\HttpException $exception)
 {
     http_response_code($exception->getStatusCode());
@@ -49,6 +61,8 @@ try  {
         })
         ->routeDefinitionsCallback(function(FastRoute\RouteCollector $r) {
             $r->addRoute('GET', '/', 'home');
+            $r->addRoute('GET', '/api/configuration', 'handleConfiguration');
+            $r->addRoute('GET', '/api/status', 'handleStatus');
         })
         ->dispatch();
 } catch (Pocs\Exception\HttpException $e) {
