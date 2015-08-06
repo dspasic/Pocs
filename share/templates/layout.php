@@ -151,7 +151,9 @@
 <body>
 
 <div class="container">
-    <h1><?php echo $view->pageTitle(); ?></h1>
+    <div class="page-header">
+        <h1><?php echo $view->pageTitle(); ?></h1>
+    </div>
     <?php echo $content ?>
 </div>
 
