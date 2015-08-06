@@ -8,13 +8,33 @@ use Pocs\Exception\NotFoundHttpException;
 
 class FrontController
 {
-    private $preDispatchers;
+    /**
+     * @var array
+     */
+    private $preDispatchers = [];
 
     /**
      * @var FastRoute\Dispatcher
      */
     private $dispatcher;
 
+    /**
+     * @var string
+     */
+    private $frontControllerPath;
+
+    /**
+     * @param string $frontControllerPath
+     */
+    public function __construct($frontControllerPath)
+    {
+        $this->frontControllerPath = $frontControllerPath;
+    }
+
+    /**
+     * @param callable $preDispatcher
+     * @return $this
+     */
     public function addPreDispatcher(callable $preDispatcher)
     {
         $this->preDispatchers[] = $preDispatcher;
@@ -22,6 +42,10 @@ class FrontController
         return $this;
     }
 
+    /**
+     * @param callable $callbacks
+     * @return $this
+     */
     public function routeDefinitionsCallback(callable $callbacks)
     {
         $this->dispatcher = FastRoute\simpleDispatcher($callbacks);
@@ -31,7 +55,7 @@ class FrontController
 
     public function dispatch()
     {
-        $skip = $_SERVER['SCRIPT_NAME'] . '/web/index.php';
+        $skip = $_SERVER['SCRIPT_NAME'] . $this->frontControllerPath;
         $uri = str_replace($skip, '', $_SERVER['REQUEST_URI']);
         if (empty($uri)) {
             $uri = '/';

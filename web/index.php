@@ -38,7 +38,7 @@ function handleHttpException(\Pocs\Exception\HttpException $exception)
 }
 
 try  {
-    (new \Pocs\FrontController())
+    (new \Pocs\FrontController('/web/' . pathinfo(__FILE__, PATHINFO_BASENAME)))
         ->addPreDispatcher(function() {
             $pocsConfigFile = str_replace(
                 'phar://',
