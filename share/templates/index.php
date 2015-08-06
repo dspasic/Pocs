@@ -303,7 +303,7 @@ ob_start();
 
         <div class="tab">
             <input type="radio" id="tab-scripts" name="tab-group-1">
-            <label for="tab-scripts">Scripts (<?php echo $view->getScriptStatusCount(); ?>)</label>
+            <label for="tab-scripts">Scripts <span class="badge"><?php echo $view->getScriptStatusCount(); ?></span></label>
             <div class="content">
                 <table class="table table-striped" id="data-grid-scripts">
                     <tr>
