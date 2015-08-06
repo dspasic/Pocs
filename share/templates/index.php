@@ -264,11 +264,20 @@ $view = new IndexView();
 
 ob_start();
 ?>
-    <div class="tabs">
-        <div class="tab">
-            <input type="radio" id="tab-status" name="tab-group-1" checked>
-            <label for="tab-status">Status</label>
-            <div class="content">
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#status" role="tab" data-toggle="tab" aria-controls="status">Status</a></li>
+    <li role="presentation"><a href="#config" role="tab" data-toggle="tab" aria-controls="config">Configuration</a></li>
+    <li role="presentation"><a href="#scripts" role="tab" data-toggle="tab" aria-controls="scripts">
+            Scripts <span class="badge"><?php echo $view->getScriptStatusCount() ?></span>
+        </a></li>
+    <li role="presentation"><a href="#visualise" id="btn-visualise">Visualise</a></li>
+</ul>
+
+
+
+<div class="tab-content">
+
+        <div class="tab-pane fade in active" role="tabpanel" id="status">
                 <table class="table table-striped">
                     <?php foreach ($view->getStatus() as $row): ?>
                         <?php if (isset($row['section'])): ?>
@@ -283,13 +292,9 @@ ob_start();
                         <?php endif; ?>
                     <?php endforeach ?>
                 </table>
-            </div>
         </div>
 
-        <div class="tab">
-            <input type="radio" id="tab-config" name="tab-group-1">
-            <label for="tab-config">Configuration</label>
-            <div class="content">
+        <div class="tab-pane fade" role="tabpanel" id="config">
                 <table class="table table-striped">
                     <?php foreach ($view->getSettings() as $row): ?>
                         <tr>
@@ -298,13 +303,9 @@ ob_start();
                         </tr>
                     <?php endforeach ?>
                 </table>
-            </div>
         </div>
 
-        <div class="tab">
-            <input type="radio" id="tab-scripts" name="tab-group-1">
-            <label for="tab-scripts">Scripts <span class="badge"><?php echo $view->getScriptStatusCount(); ?></span></label>
-            <div class="content">
+        <div class="tab-pane fade" id="scripts" role="tabpanel">
                 <table class="table table-striped" id="data-grid-scripts">
                     <tr>
                         <th width="10%">Hits</th>
@@ -337,16 +338,8 @@ ob_start();
 
                     <?php endforeach ?>
                 </table>
-            </div>
         </div>
-
-        <div class="tab">
-            <input type="radio" id="tab-visualise" name="tab-group-1">
-            <label for="tab-visualise">Visualise Partition</label>
-            <div class="content"></div>
-        </div>
-
-    </div>
+</div>
 
     <div id="graph">
         <form>
@@ -543,12 +536,11 @@ ob_start();
                 $('#partition, #close-partition').fadeToggle();
                 // Is the visualisation being closed? If so show the status tab again
                 if (close) {
-                    $('#tab-visualise').removeAttr('checked');
-                    $('#tab-status').trigger('click');
+                    $('#status').trigger('click');
                 }
             }
 
-            $('label[for="tab-visualise"], #close-partition').on('click', function() {
+            $('#btn-visualise, #close-partition').on('click', function() {
                 handleVisualisationToggle(($(this).attr('id') === 'close-partition'));
             });
 

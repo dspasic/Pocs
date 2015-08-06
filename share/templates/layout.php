@@ -5,60 +5,6 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <style>
-        p.capitalize {
-            text-transform: capitalize;
-        }
-
-        .tabs {
-            position: relative;
-            float: left;
-            width: 60%;
-        }
-
-        .tab {
-            float: left;
-        }
-
-        .tab label {
-            background: #eee;
-            padding: 10px 12px;
-            border: 1px solid #ccc;
-            margin-left: -1px;
-            position: relative;
-            left: 1px;
-        }
-
-        .tab [type=radio] {
-            display: none;
-        }
-
-        .tab th, .tab td {
-            padding: 8px 12px;
-        }
-
-        .content {
-            position: absolute;
-            top: 28px;
-            left: 0;
-            background: white;
-            border: 1px solid #ccc;
-            height: 450px;
-            width: 100%;
-            overflow: auto;
-        }
-
-        .content table {
-            width: 100%;
-        }
-
-        .content th, .tab:nth-child(3) td {
-            text-align: left;
-        }
-
-        .content td {
-            text-align: right;
-        }
-
         [type=radio]:checked ~ label {
             background: white;
             border-bottom: 1px solid white;
