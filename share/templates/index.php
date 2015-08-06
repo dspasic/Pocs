@@ -269,7 +269,7 @@ ob_start();
             <input type="radio" id="tab-status" name="tab-group-1" checked>
             <label for="tab-status">Status</label>
             <div class="content">
-                <table>
+                <table class="table table-striped">
                     <?php foreach ($view->getStatus() as $row): ?>
                         <?php if (isset($row['section'])): ?>
                             <tr>
@@ -290,14 +290,14 @@ ob_start();
             <input type="radio" id="tab-config" name="tab-group-1">
             <label for="tab-config">Configuration</label>
             <div class="content">
-                <table>
+                <table class="table table-striped">
                     <?php foreach ($view->getSettings() as $row): ?>
                         <tr>
                             <th><?php echo $row['config'] ?></th>
                             <td><?php echo $row['value'] ?></td>
                         </tr>
                     <?php endforeach ?>
-                    </table>
+                </table>
             </div>
         </div>
 
@@ -305,7 +305,7 @@ ob_start();
             <input type="radio" id="tab-scripts" name="tab-group-1">
             <label for="tab-scripts">Scripts (<?php echo $view->getScriptStatusCount(); ?>)</label>
             <div class="content">
-                <table id="data-grid-scripts" style="font-size:0.8em;">
+                <table class="table table-striped" id="data-grid-scripts">
                     <tr>
                         <th width="10%">Hits</th>
                         <th width="20%">Memory</th>
