@@ -2,6 +2,7 @@
 <meta lang="en" charset="utf-8">
 <html>
 <head>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <style>
         body {
             font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
