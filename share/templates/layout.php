@@ -5,12 +5,6 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <style>
-        body {
-            font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
         p.capitalize {
             text-transform: capitalize;
         }
@@ -160,7 +154,6 @@
     <h1><?php echo $view->pageTitle(); ?></h1>
     <?php echo $content ?>
 </div>
-
 
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
