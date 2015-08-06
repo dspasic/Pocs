@@ -2,7 +2,7 @@
   "alias": "pocs.phar",
   "output": "build/pocs.phar",
   "compression": "NONE",
-  "directories": ["src", "share", "vendor", "web"],
+  "directories": ["src", "share/phar", "share/templates", "vendor", "web"],
   "files": [
     "LICENSE"
   ],
