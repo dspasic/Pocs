@@ -10,24 +10,6 @@
             padding: 0;
         }
 
-        #container {
-            width: 1024px;
-            margin: auto;
-            position: relative;
-        }
-
-        h1 {
-            padding: 10px 0;
-        }
-
-        table {
-            border-collapse: collapse;
-        }
-
-        tbody tr:nth-child(even) {
-            background-color: #eee;
-        }
-
         p.capitalize {
             text-transform: capitalize;
         }
@@ -80,10 +62,6 @@
 
         .content td {
             text-align: right;
-        }
-
-        .clickable {
-            cursor: pointer;
         }
 
         [type=radio]:checked ~ label {
@@ -177,7 +155,7 @@
 
 <body>
 
-<div id="container">
+<div class="container">
     <h1><?php echo $view->pageTitle(); ?></h1>
     <?php echo $content ?>
 </div>
