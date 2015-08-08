@@ -170,6 +170,11 @@ class IndexView
             $this->status['opcache_statistics']['hash_restarts'],
         );
 
+        $dataset['interned-strings'] = array(
+            $this->status['interned_strings_usage']['used_memory'],
+            $this->status['interned_strings_usage']['free_memory'],
+        );
+
         if (THOUSAND_SEPARATOR === true) {
             $dataset['TSEP'] = 1;
         } else {
@@ -277,9 +282,52 @@ ob_start();
 
         <div class="tab-pane fade in active" role="tabpanel" id="status">
             <div class="row">
+                <div class="col-xs-12">
+                    <h3>Common statistics</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">
+                    <table class="table">
+                        <tr>
+                            <th>Opcache enabled</th>
+                            <td><span class="label label-<?php echo $view->status['opcache_enabled'] ? 'success' : 'danger' ?>">
+                                    <?php echo $view->status['opcache_enabled'] ? 'enabled' : 'disabled' ?>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Cache full</th>
+                            <td><span class="label label-<?php echo $view->status['cache_full'] ? 'success' : 'danger' ?>">
+                                    <?php echo $view->status['cache_full'] ? 'yes' : 'no' ?>
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-xs-6">
+                    <table class="table">
+                        <tr>
+                            <th>Restart pending</th>
+                            <td><span class="label label-<?php echo $view->status['restart_pending'] ? 'success' : 'danger' ?>">
+                                    <?php echo $view->status['restart_pending'] ? 'yes' : 'no' ?>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Restart in progress</th>
+                            <td><span class="label label-<?php echo $view->status['restart_in_progress'] ? 'success' : 'danger' ?>">
+                                    <?php echo $view->status['restart_in_progress'] ? 'yes' : 'no' ?>
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-xs-6">
                     <h3>Memory usage</h3>
-                    <table class="table">
+                    <table class="table table-striped">
                         <tr>
                             <th>Used memory</th>
                             <td><?php echo $view->status['memory_usage']['used_memory'] ?></td>
@@ -307,20 +355,69 @@ ob_start();
             </div>
             <div class="row">
                 <div class="col-xs-6">
-                    <h3>Keys</h3>
+                    <h3>Opcache statistics</h3>
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Opcache hit rate</th>
+                            <td><?php echo $view->status['opcache_statistics']['opcache_hit_rate'] ?></td>
+                        </tr>
+                        <tr>
+                            <th>Start time</th>
+                            <td><?php echo $view->status['opcache_statistics']['start_time'] ?></td>
+                        </tr>
+                        <tr>
+                            <th>Last restart time</th>
+                            <td><?php echo $view->status['opcache_statistics']['last_restart_time'] ?></td>
+                        </tr>
+                        <tr>
+                            <th>OOM restarts</th>
+                            <td><?php echo $view->status['opcache_statistics']['oom_restarts'] ?></td>
+                        </tr>
+                        <tr>
+                            <th>Hash restarts</th>
+                            <td><?php echo $view->status['opcache_statistics']['hash_restarts'] ?></td>
+                        </tr>
+                        <tr>
+                            <th>Manual restarts</th>
+                            <td><?php echo $view->status['opcache_statistics']['manual_restarts'] ?></td>
+                        </tr>
+                        <tr>
+                            <th>Num cached scripts</th>
+                            <td><?php echo $view->status['opcache_statistics']['num_cached_scripts'] ?></td>
+                        </tr>
+                        <tr>
+                            <th>Num cached keys</th>
+                            <td><?php echo $view->status['opcache_statistics']['num_cached_keys'] ?></td>
+                        </tr>
+                        <tr>
+                            <th>Max cached keys</th>
+                            <td><?php echo $view->status['opcache_statistics']['max_cached_keys'] ?></td>
+                        </tr>
+                        <tr>
+                            <th>Hits</th>
+                            <td><?php echo $view->status['opcache_statistics']['hits'] ?></td>
+                        </tr>
+                        <tr>
+                            <th>Misses</th>
+                            <td><?php echo $view->status['opcache_statistics']['misses'] ?></td>
+                        </tr>
+                        <tr>
+                            <th>Blacklist misses</th>
+                            <td><?php echo $view->status['opcache_statistics']['blacklist_misses'] ?></td>
+                        </tr>
+                        <tr>
+                            <th>Blacklist miss ratio</th>
+                            <td><?php echo $view->status['opcache_statistics']['blacklist_miss_ratio'] ?></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-xs-6">
                     <div id="graph-keys" class="graph">
                         <div id="stats-keys" class="stats"></div>
                     </div>
-                </div>
-                <div class="col-xs-6">
-                    <h3>Hits</h3>
-
                     <div id="graph-hits" class="graph">
                         <div id="stats-hits" class="stats"></div>
                     </div>
-                </div>
-                <div class="col-xs-6">
-                    <h3>Restarts</h3>
                     <div id="graph-restarts" class="graph">
                         <div id="stats-restarts" class="stats"></div>
                     </div>
@@ -328,20 +425,30 @@ ob_start();
             </div>
             <div class="row">
                 <div class="col-xs-6">
+                    <h3>Interned strings usage</h3>
                     <table class="table table-striped">
-                        <?php foreach ($view->getStatus() as $row): ?>
-                            <?php if (isset($row['section'])): ?>
-                                <tr>
-                                    <th colspan="2"><?php echo $row['key'] ?></th>
-                                </tr>
-                            <?php else: ?>
-                                <tr>
-                                    <th><?php echo $row['key'] ?></th>
-                                    <td><?php echo $row['value'] ?></td>
-                                </tr>
-                            <?php endif; ?>
-                        <?php endforeach ?>
+                        <tr>
+                            <th>Buffer size</th>
+                            <td><?php echo $view->status['interned_strings_usage']['buffer_size'] ?></td>
+                        </tr>
+                        <tr>
+                            <th>Used memory</th>
+                            <td><?php echo $view->status['interned_strings_usage']['used_memory'] ?></td>
+                        </tr>
+                        <tr>
+                            <th>Free memory</th>
+                            <td><?php echo $view->status['interned_strings_usage']['free_memory'] ?></td>
+                        </tr>
+                        <tr>
+                            <th>Number of string</th>
+                            <td><?php echo $view->status['interned_strings_usage']['number_of_strings'] ?></td>
+                        </tr>
                     </table>
+                </div>
+                <div class="col-xs-6">
+                    <div id="graph-interned-strings" class="graph">
+                        <div id="stats-interned-strings"class="stats"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -417,7 +524,7 @@ ob_start();
         var pie = d3.layout.pie().sort(null);
         var arc = d3.svg.arc().innerRadius(radius - 20).outerRadius(radius - 50);
 
-        $(['memory', 'keys', 'hits', 'restarts']).each(function(idx, val) {
+        $(['memory', 'keys', 'hits', 'restarts', 'interned-strings']).each(function(idx, val) {
             var svg = d3.select("#graph-" + val).append("svg")
                 .attr("width", width)
                 .attr("height", height)
@@ -432,20 +539,6 @@ ob_start();
             drawStatLables(val);
         });
 
-        var svg = d3.select("#graph").append("svg")
-            .attr("width", width)
-            .attr("height", height)
-            .append("g")
-            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-
-        var path = svg.selectAll("path")
-            .data(pie(dataset.memory))
-            .enter().append("path")
-            .attr("fill", function(d, i) { return colour(i); })
-            .attr("d", arc)
-            .each(function(d) { this._current = d; }); // store the initial values
-
-        d3.selectAll("input").on("change", change);
         drawStatLables("memory");
 
         function drawStatLables(t) {
@@ -464,39 +557,11 @@ ob_start();
                 var html = "<table><tr><th style='background:#B41F1F;'>Memory</th><td>"+dataset[t][0]+"</td></tr>"+
                     "<tr><th style='background:#1FB437;'>Manual</th><td>"+dataset[t][1]+"</td></tr>"+
                     "<tr><th style='background:#ff7f0e;'>Keys</th><td>"+dataset[t][2]+"</td></tr></table>";
+            } else if (t === "interned-strings") {
+                var html = "<table><tr><th style='background:#B41F1F;'>Used</th><td>"+sizeForHumans(dataset[t][0])+"</td></tr>"+
+                    "<tr><th style='background:#1FB437;'>Free</th><td>"+sizeForHumans(dataset[t][1])+"</td></tr></table>";
             }
             d3.select("#stats-" + t).html(html);
-        }
-
-        function change() {
-            if (typeof dataset[this.value] === 'undefined') {
-                return;
-            }
-
-            // Filter out any zero values to see if there is anything left
-            var remove_zero_values = dataset[this.value].filter(function(value) {
-                return value > 0;
-            });
-
-            // Skip if the value is undefined for some reason
-            if (remove_zero_values.length > 0) {
-                $('#graph').find('> svg').show();
-                path = path.data(pie(dataset[this.value])); // update the data
-                path.transition().duration(750).attrTween("d", arcTween); // redraw the arcs
-                // Hide the graph if we can't draw it correctly, not ideal but this works
-            } else {
-                $('#graph').find('> svg').hide();
-            }
-
-            drawStatLables(this.value);
-        }
-
-        function arcTween(a) {
-            var i = d3.interpolate(this._current, a);
-            this._current = i(0);
-            return function(t) {
-                return arc(i(t));
-            };
         }
 
         function sizeForHumans(bytes) {
