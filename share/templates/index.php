@@ -378,7 +378,7 @@ ob_start();
     <div id="close-partition">&#10006; Close Visualisation</div>
     <div id="partition"></div>
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.0.1/d3.v3.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script>
         var dataset = <?php echo $view->getGraphDataSetJson(); ?>;
@@ -434,11 +434,11 @@ ob_start();
                     "<tr><th style='background:#ff7f0e;' rowspan=\"2\">Wasted</th><td><?php echo $view->getHumanWastedMemory()?></td></tr>"+
                     "<tr><td><?php echo $view->getWastedMemoryPercentage()?>%</td></tr></table>";
             } else if (t === "keys") {
-                var html = "<table><tr><th style='background:#B41F1F;'>Cached keys</th><td>"+format_value(dataset[t][0])+"</td></tr>"+
-                    "<tr><th style='background:#1FB437;'>Free Keys</th><td>"+format_value(dataset[t][1])+"</td></tr></table>";
+                var html = "<table><tr><th style='background:#B41F1F;'>Cached keys</th><td>"+formatValue(dataset[t][0])+"</td></tr>"+
+                    "<tr><th style='background:#1FB437;'>Free Keys</th><td>"+formatValue(dataset[t][1])+"</td></tr></table>";
             } else if (t === "hits") {
-                var html = "<table><tr><th style='background:#B41F1F;'>Misses</th><td>"+format_value(dataset[t][0])+"</td></tr>"+
-                    "<tr><th style='background:#1FB437;'>Cache Hits</th><td>"+format_value(dataset[t][1])+"</td></tr></table>";
+                var html = "<table><tr><th style='background:#B41F1F;'>Misses</th><td>"+formatValue(dataset[t][0])+"</td></tr>"+
+                    "<tr><th style='background:#1FB437;'>Cache Hits</th><td>"+formatValue(dataset[t][1])+"</td></tr></table>";
             } else if (t === "restarts") {
                 var html = "<table><tr><th style='background:#B41F1F;'>Memory</th><td>"+dataset[t][0]+"</td></tr>"+
                     "<tr><th style='background:#1FB437;'>Manual</th><td>"+dataset[t][1]+"</td></tr>"+
@@ -478,7 +478,7 @@ ob_start();
             };
         }
 
-        function size_for_humans(bytes) {
+        function sizeForHumans(bytes) {
             if (bytes > 1048576) {
                 return (bytes/1048576).toFixed(2) + ' MB';
             } else if (bytes > 1024) {
@@ -486,12 +486,11 @@ ob_start();
             } else return bytes + ' bytes';
         }
 
-        function format_value(value) {
+        function formatValue(value) {
             if (dataset["TSEP"] == 1) {
                 return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            } else {
-                return value;
             }
+            return value;
         }
 
         var w = window.innerWidth,
