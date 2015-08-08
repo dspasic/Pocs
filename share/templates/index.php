@@ -4,9 +4,9 @@ define('THOUSAND_SEPARATOR', true);
 
 class IndexView
 {
-    private $configuration;
-    private $status;
-    private $d3Scripts = array();
+    public $configuration = [];
+    public $status = [];
+    public $d3Scripts = [];
 
     public function __construct()
     {
