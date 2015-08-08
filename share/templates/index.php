@@ -273,25 +273,57 @@ ob_start();
     <li role="presentation"><a href="#visualise" id="btn-visualise">Visualise</a></li>
 </ul>
 
-
-
 <div class="tab-content">
 
         <div class="tab-pane fade in active" role="tabpanel" id="status">
-                <table class="table table-striped">
-                    <?php foreach ($view->getStatus() as $row): ?>
-                        <?php if (isset($row['section'])): ?>
-                            <tr>
-                                <th colspan="2"><?php echo $row['key'] ?></th>
-                            </tr>
-                       <?php else: ?>
-                            <tr>
-                                <th><?php echo $row['key'] ?></th>
-                                <td><?php echo $row['value'] ?></td>
-                            </tr>
-                        <?php endif; ?>
-                    <?php endforeach ?>
-                </table>
+            <div class="row">
+                <div class="col-xs-6">
+                    <h3>Memory</h3>
+
+                    <div id="graph-memory" class="graph">
+                        <div id="stats-memory" class="stats"></div>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <h3>Keys</h3>
+                    <div id="graph-keys" class="graph">
+                        <div id="stats-keys" class="stats"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">
+                    <h3>Hits</h3>
+
+                    <div id="graph-hits" class="graph">
+                        <div id="stats-hits" class="stats"></div>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <h3>Restarts</h3>
+                    <div id="graph-restarts" class="graph">
+                        <div id="stats-restarts" class="stats"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">
+                    <table class="table table-striped">
+                        <?php foreach ($view->getStatus() as $row): ?>
+                            <?php if (isset($row['section'])): ?>
+                                <tr>
+                                    <th colspan="2"><?php echo $row['key'] ?></th>
+                                </tr>
+                            <?php else: ?>
+                                <tr>
+                                    <th><?php echo $row['key'] ?></th>
+                                    <td><?php echo $row['value'] ?></td>
+                                </tr>
+                            <?php endif; ?>
+                        <?php endforeach ?>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <div class="tab-pane fade" role="tabpanel" id="config">
@@ -341,16 +373,6 @@ ob_start();
         </div>
 </div>
 
-    <div id="graph">
-        <form>
-            <label><input type="radio" name="dataset" value="memory" checked> Memory</label>
-            <label><input type="radio" name="dataset" value="keys"> Keys</label>
-            <label><input type="radio" name="dataset" value="hits"> Hits</label>
-            <label><input type="radio" name="dataset" value="restarts"> Restarts</label>
-        </form>
-
-        <div id="stats"></div>
-    </div>
 
 
     <div id="close-partition">&#10006; Close Visualisation</div>
@@ -372,8 +394,23 @@ ob_start();
 
         var colour = d3.scale.customColours();
         var pie = d3.layout.pie().sort(null);
-
         var arc = d3.svg.arc().innerRadius(radius - 20).outerRadius(radius - 50);
+
+        $(['memory', 'keys', 'hits', 'restarts']).each(function(idx, val) {
+            var svg = d3.select("#graph-" + val).append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+                .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+            svg.selectAll("path")
+                .data(pie(dataset[val]))
+                .enter().append("path")
+                .attr("fill", function(d, i) { return colour(i); })
+                .attr("d", arc)
+                .each(function(d) { this._current = d; }); // store the initial values
+            drawStatLables(val);
+        });
+
         var svg = d3.select("#graph").append("svg")
             .attr("width", width)
             .attr("height", height)
@@ -388,33 +425,26 @@ ob_start();
             .each(function(d) { this._current = d; }); // store the initial values
 
         d3.selectAll("input").on("change", change);
-        set_text("memory");
+        drawStatLables("memory");
 
-        function set_text(t) {
+        function drawStatLables(t) {
             if (t === "memory") {
-                d3.select("#stats").html(
-                    "<table><tr><th style='background:#B41F1F;'>Used</th><td><?php echo $view->getHumanUsedMemory()?></td></tr>"+
+                var html = "<table><tr><th style='background:#B41F1F;'>Used</th><td><?php echo $view->getHumanUsedMemory()?></td></tr>"+
                     "<tr><th style='background:#1FB437;'>Free</th><td><?php echo $view->getHumanFreeMemory()?></td></tr>"+
                     "<tr><th style='background:#ff7f0e;' rowspan=\"2\">Wasted</th><td><?php echo $view->getHumanWastedMemory()?></td></tr>"+
-                    "<tr><td><?php echo $view->getWastedMemoryPercentage()?>%</td></tr></table>"
-                );
+                    "<tr><td><?php echo $view->getWastedMemoryPercentage()?>%</td></tr></table>";
             } else if (t === "keys") {
-                d3.select("#stats").html(
-                    "<table><tr><th style='background:#B41F1F;'>Cached keys</th><td>"+format_value(dataset[t][0])+"</td></tr>"+
-                    "<tr><th style='background:#1FB437;'>Free Keys</th><td>"+format_value(dataset[t][1])+"</td></tr></table>"
-                );
+                var html = "<table><tr><th style='background:#B41F1F;'>Cached keys</th><td>"+format_value(dataset[t][0])+"</td></tr>"+
+                    "<tr><th style='background:#1FB437;'>Free Keys</th><td>"+format_value(dataset[t][1])+"</td></tr></table>";
             } else if (t === "hits") {
-                d3.select("#stats").html(
-                    "<table><tr><th style='background:#B41F1F;'>Misses</th><td>"+format_value(dataset[t][0])+"</td></tr>"+
-                    "<tr><th style='background:#1FB437;'>Cache Hits</th><td>"+format_value(dataset[t][1])+"</td></tr></table>"
-                );
+                var html = "<table><tr><th style='background:#B41F1F;'>Misses</th><td>"+format_value(dataset[t][0])+"</td></tr>"+
+                    "<tr><th style='background:#1FB437;'>Cache Hits</th><td>"+format_value(dataset[t][1])+"</td></tr></table>";
             } else if (t === "restarts") {
-                d3.select("#stats").html(
-                    "<table><tr><th style='background:#B41F1F;'>Memory</th><td>"+dataset[t][0]+"</td></tr>"+
+                var html = "<table><tr><th style='background:#B41F1F;'>Memory</th><td>"+dataset[t][0]+"</td></tr>"+
                     "<tr><th style='background:#1FB437;'>Manual</th><td>"+dataset[t][1]+"</td></tr>"+
-                    "<tr><th style='background:#ff7f0e;'>Keys</th><td>"+dataset[t][2]+"</td></tr></table>"
-                );
+                    "<tr><th style='background:#ff7f0e;'>Keys</th><td>"+dataset[t][2]+"</td></tr></table>";
             }
+            d3.select("#stats-" + t).html(html);
         }
 
         function change() {
@@ -437,7 +467,7 @@ ob_start();
                 $('#graph').find('> svg').hide();
             }
 
-            set_text(this.value);
+            drawStatLables(this.value);
         }
 
         function arcTween(a) {

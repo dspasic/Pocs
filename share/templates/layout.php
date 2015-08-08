@@ -15,10 +15,11 @@
             z-index: 1;
         }
 
-        #graph {
-            float: right;
-            width: 40%;
+        #graph,
+        .graph {
             position: relative;
+            height: 400px;
+            width: 400px;
         }
 
         #graph > form {
@@ -27,19 +28,24 @@
             top: -20px;
         }
 
-        #graph > svg {
-            position: absolute;
+        #graph > svg,
+        .graph > svg {
+            position: relative;
             top: 0;
             right: 0;
         }
 
-        #stats {
+        #stats,
+        .stats {
             position: absolute;
-            right: 125px;
-            top: 145px;
+            right: 150px;
+            top: 150px;
         }
 
-        #stats th, #stats td {
+        #stats th,
+        #stats td,
+        .stats th,
+        .stats td {
             padding: 6px 10px;
             font-size: 0.8em;
         }
