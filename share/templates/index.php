@@ -554,9 +554,9 @@ ob_start();
                 var html = "<table><tr><th style='background:#B41F1F;'>Misses</th><td>"+formatValue(dataset[t][0])+"</td></tr>"+
                     "<tr><th style='background:#1FB437;'>Cache Hits</th><td>"+formatValue(dataset[t][1])+"</td></tr></table>";
             } else if (t === "restarts") {
-                var html = "<table><tr><th style='background:#B41F1F;'>Memory</th><td>"+dataset[t][0]+"</td></tr>"+
+                var html = "<table><tr><th style='background:#B41F1F;'>OOM</th><td>"+dataset[t][0]+"</td></tr>"+
                     "<tr><th style='background:#1FB437;'>Manual</th><td>"+dataset[t][1]+"</td></tr>"+
-                    "<tr><th style='background:#ff7f0e;'>Keys</th><td>"+dataset[t][2]+"</td></tr></table>";
+                    "<tr><th style='background:#ff7f0e;'>Hash</th><td>"+dataset[t][2]+"</td></tr></table>";
             } else if (t === "interned-strings") {
                 var html = "<table><tr><th style='background:#B41F1F;'>Used</th><td>"+sizeForHumans(dataset[t][0])+"</td></tr>"+
                     "<tr><th style='background:#1FB437;'>Free</th><td>"+sizeForHumans(dataset[t][1])+"</td></tr></table>";
