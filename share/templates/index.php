@@ -278,20 +278,40 @@ ob_start();
         <div class="tab-pane fade in active" role="tabpanel" id="status">
             <div class="row">
                 <div class="col-xs-6">
-                    <h3>Memory</h3>
+                    <h3>Memory usage</h3>
+                    <table class="table">
+                        <tr>
+                            <th>Used memory</th>
+                            <td><?php echo $view->status['memory_usage']['used_memory'] ?></td>
+                        </tr>
+                        <tr>
+                            <th>Free memory</th>
+                            <td><?php echo $view->status['memory_usage']['free_memory'] ?></td>
+                        </tr>
+                        <tr>
+                            <th>Wasted memory</th>
+                            <td><?php echo $view->status['memory_usage']['free_memory'] ?></td>
+                        </tr>
+                        <tr>
+                            <th>Current wasted percentage</th>
+                            <td><?php echo $view->status['memory_usage']['current_wasted_percentage'] ?></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-xs-6">
 
                     <div id="graph-memory" class="graph">
                         <div id="stats-memory" class="stats"></div>
                     </div>
                 </div>
+            </div>
+            <div class="row">
                 <div class="col-xs-6">
                     <h3>Keys</h3>
                     <div id="graph-keys" class="graph">
                         <div id="stats-keys" class="stats"></div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
                 <div class="col-xs-6">
                     <h3>Hits</h3>
 
@@ -381,6 +401,7 @@ ob_start();
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script>
+
         var dataset = <?php echo $view->getGraphDataSetJson(); ?>;
 
         var width = 400,
