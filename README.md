@@ -52,4 +52,4 @@ You can contribute in one of three ways:
 
 # Credits
 
-The Pocs is a fork of the project [rlerdorf/opcache-status](https://github.com/rlerdorf/opcache-status).
+Pocs is a fork of the project [rlerdorf/opcache-status](https://github.com/rlerdorf/opcache-status).
