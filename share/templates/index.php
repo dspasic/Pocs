@@ -23,55 +23,6 @@ class IndexView
             {$this->configuration['version']['version']}";
     }
 
-    public function getStatus()
-    {
-        foreach ($this->status as $key => $value) {
-            if ($key === 'scripts') {
-                continue;
-            }
-
-            if (is_array($value)) {
-                yield ["key" => $key, "section" => true];
-
-                foreach ($value as $k => $v) {
-                    if ($v === false) {
-                        $v = 'false';
-                    } elseif ($v === true) {
-                        $v = 'true';
-                    }
-                    if ($k === 'used_memory' || $k === 'free_memory' || $k === 'wasted_memory') {
-                        $v = $this->sizeForHumans(
-                            $v
-                        );
-                    } elseif ($k === 'current_wasted_percentage' || $k === 'opcache_hit_rate') {
-                        $v = number_format(
-                                $v,
-                                2
-                            ) . '%';
-                    } elseif ($k === 'blacklist_miss_ratio') {
-                        $v = number_format($v, 2) . '%';
-                    } elseif ($k === 'start_time' || $k === 'last_restart_time') {
-                        $v = ($v ? date(DATE_RFC822, $v) : 'never');
-                    }
-
-                    if (THOUSAND_SEPARATOR === true && is_int($v)) {
-                        $v = number_format($v);
-                    }
-
-                    yield ["key" => $k, "value" => $v];
-                }
-            } else {
-                if ($value === false) {
-                    $value = 'false';
-                } elseif ($value === true) {
-                    $value = 'true';
-                }
-
-                yield ["key" => $key, "value" => $value];
-            }
-        }
-    }
-
     public function getSettings()
     {
         foreach ($this->configuration['directives'] as $key => $value) {
@@ -376,15 +327,15 @@ ob_start();
                         </tr>
                         <tr>
                             <th>OOM restarts</th>
-                            <td><?php echo $view->status['opcache_statistics']['oom_restarts'] ?></td>
+                            <td><?php echo $view->helper->formatNumber($view->status['opcache_statistics']['oom_restarts']) ?></td>
                         </tr>
                         <tr>
                             <th>Hash restarts</th>
-                            <td><?php echo $view->status['opcache_statistics']['hash_restarts'] ?></td>
+                            <td><?php echo $view->helper->formatNumber($view->status['opcache_statistics']['hash_restarts']) ?></td>
                         </tr>
                         <tr>
                             <th>Manual restarts</th>
-                            <td><?php echo $view->status['opcache_statistics']['manual_restarts'] ?></td>
+                            <td><?php echo $view->helper->formatNumber($view->status['opcache_statistics']['manual_restarts']) ?></td>
                         </tr>
                         <tr>
                             <th>Num cached scripts</th>
