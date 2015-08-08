@@ -7,6 +7,7 @@ class IndexView
     public $configuration = [];
     public $status = [];
     public $d3Scripts = [];
+    public $helper = null;
 
     public function __construct()
     {
@@ -330,19 +331,19 @@ ob_start();
                     <table class="table table-striped">
                         <tr>
                             <th>Used memory</th>
-                            <td><?php echo $view->status['memory_usage']['used_memory'] ?></td>
+                            <td><?php echo $view->helper->sizeForHumans($view->status['memory_usage']['used_memory']) ?></td>
                         </tr>
                         <tr>
                             <th>Free memory</th>
-                            <td><?php echo $view->status['memory_usage']['free_memory'] ?></td>
+                            <td><?php echo $view->helper->sizeForHumans($view->status['memory_usage']['free_memory']) ?></td>
                         </tr>
                         <tr>
                             <th>Wasted memory</th>
-                            <td><?php echo $view->status['memory_usage']['free_memory'] ?></td>
+                            <td><?php echo $view->helper->sizeForHumans($view->status['memory_usage']['wasted_memory']) ?></td>
                         </tr>
                         <tr>
                             <th>Current wasted percentage</th>
-                            <td><?php echo $view->status['memory_usage']['current_wasted_percentage'] ?></td>
+                            <td><?php echo $view->helper->formatNumber($view->status['memory_usage']['current_wasted_percentage']) ?>%</td>
                         </tr>
                     </table>
                 </div>
@@ -359,15 +360,19 @@ ob_start();
                     <table class="table table-striped">
                         <tr>
                             <th>Opcache hit rate</th>
-                            <td><?php echo $view->status['opcache_statistics']['opcache_hit_rate'] ?></td>
+                            <td><?php echo $view->helper->formatNumber($view->status['opcache_statistics']['opcache_hit_rate']) ?>%</td>
                         </tr>
                         <tr>
                             <th>Start time</th>
-                            <td><?php echo $view->status['opcache_statistics']['start_time'] ?></td>
+                            <td><?php echo $view->status['opcache_statistics']['start_time']
+                                ? date(DATE_RFC822, $view->status['opcache_statistics']['start_time'])
+                                : 'never' ?></td>
                         </tr>
                         <tr>
                             <th>Last restart time</th>
-                            <td><?php echo $view->status['opcache_statistics']['last_restart_time'] ?></td>
+                            <td><?php echo $view->status['opcache_statistics']['last_restart_time']
+                                    ? date(DATE_RFC822, $view->status['opcache_statistics']['last_restart_time'])
+                                    : 'never' ?></td>
                         </tr>
                         <tr>
                             <th>OOM restarts</th>
@@ -383,31 +388,31 @@ ob_start();
                         </tr>
                         <tr>
                             <th>Num cached scripts</th>
-                            <td><?php echo $view->status['opcache_statistics']['num_cached_scripts'] ?></td>
+                            <td><?php echo $view->helper->formatNumber($view->status['opcache_statistics']['num_cached_scripts']) ?></td>
                         </tr>
                         <tr>
                             <th>Num cached keys</th>
-                            <td><?php echo $view->status['opcache_statistics']['num_cached_keys'] ?></td>
+                            <td><?php echo $view->helper->formatNumber($view->status['opcache_statistics']['num_cached_keys']) ?></td>
                         </tr>
                         <tr>
                             <th>Max cached keys</th>
-                            <td><?php echo $view->status['opcache_statistics']['max_cached_keys'] ?></td>
+                            <td><?php echo $view->helper->formatNumber($view->status['opcache_statistics']['max_cached_keys']) ?></td>
                         </tr>
                         <tr>
                             <th>Hits</th>
-                            <td><?php echo $view->status['opcache_statistics']['hits'] ?></td>
+                            <td><?php echo $view->helper->formatNumber($view->status['opcache_statistics']['hits']) ?></td>
                         </tr>
                         <tr>
                             <th>Misses</th>
-                            <td><?php echo $view->status['opcache_statistics']['misses'] ?></td>
+                            <td><?php echo $view->helper->formatNumber($view->status['opcache_statistics']['misses']) ?></td>
                         </tr>
                         <tr>
                             <th>Blacklist misses</th>
-                            <td><?php echo $view->status['opcache_statistics']['blacklist_misses'] ?></td>
+                            <td><?php echo $view->helper->formatNumber($view->status['opcache_statistics']['blacklist_misses']) ?></td>
                         </tr>
                         <tr>
                             <th>Blacklist miss ratio</th>
-                            <td><?php echo $view->status['opcache_statistics']['blacklist_miss_ratio'] ?></td>
+                            <td><?php echo $view->helper->formatNumber($view->status['opcache_statistics']['blacklist_miss_ratio']) ?></td>
                         </tr>
                     </table>
                 </div>
@@ -429,19 +434,19 @@ ob_start();
                     <table class="table table-striped">
                         <tr>
                             <th>Buffer size</th>
-                            <td><?php echo $view->status['interned_strings_usage']['buffer_size'] ?></td>
-                        </tr>
-                        <tr>
-                            <th>Used memory</th>
-                            <td><?php echo $view->status['interned_strings_usage']['used_memory'] ?></td>
-                        </tr>
-                        <tr>
-                            <th>Free memory</th>
-                            <td><?php echo $view->status['interned_strings_usage']['free_memory'] ?></td>
+                            <td><?php echo $view->helper->formatNumber($view->status['interned_strings_usage']['buffer_size']) ?></td>
                         </tr>
                         <tr>
                             <th>Number of string</th>
-                            <td><?php echo $view->status['interned_strings_usage']['number_of_strings'] ?></td>
+                            <td><?php echo $view->helper->formatNumber($view->status['interned_strings_usage']['number_of_strings']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>Used memory</th>
+                            <td><?php echo $view->helper->sizeForHumans($view->status['interned_strings_usage']['used_memory']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>Free memory</th>
+                            <td><?php echo $view->helper->sizeForHumans($view->status['interned_strings_usage']['free_memory']) ?></td>
                         </tr>
                     </table>
                 </div>
