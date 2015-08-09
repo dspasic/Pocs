@@ -368,14 +368,22 @@ ob_start();
                     </table>
                 </div>
                 <div class="col-xs-6">
-                    <div id="graph-keys" class="graph">
-                        <div id="stats-keys" class="stats"></div>
-                    </div>
-                    <div id="graph-hits" class="graph">
-                        <div id="stats-hits" class="stats"></div>
-                    </div>
-                    <div id="graph-restarts" class="graph">
-                        <div id="stats-restarts" class="stats"></div>
+                    <ul class="nav nav-tabs" role="tablist" style="margin-top: 16px;">
+                        <li role="presentation" class="active"><a href="#graph-keys" role="tab" data-toggle="tab" aria-controls="keys">Keys</a></li>
+                        <li role="presentation"><a href="#graph-hits" role="tab" data-toggle="tab" aria-controls="hits">Hits</a></li>
+                        <li role="presentation"><a href="#graph-restarts" role="tab" data-toggle="tab" aria-controls="restarts">Restarts</a></li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div role="tabpanel" id="graph-keys" class="graph tab-pane fade in active">
+                            <div id="stats-keys" class="stats"></div>
+                        </div>
+                        <div role="tabpanel" id="graph-hits" class="graph tab-pane fade">
+                            <div id="stats-hits" class="stats"></div>
+                        </div>
+                        <div role="tabpanel" id="graph-restarts" class="graph tab-pange fade">
+                            <div id="stats-restarts" class="stats"></div>
+                        </div>
                     </div>
                 </div>
             </div>

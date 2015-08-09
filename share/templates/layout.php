@@ -17,8 +17,6 @@
 
         .graph {
             position: relative;
-            height: 400px;
-            width: 400px;
         }
 
         .graph > svg {
@@ -29,7 +27,7 @@
 
         .stats {
             position: absolute;
-            right: 160px;
+            right: 212px;
             top: 100px;
         }
 
