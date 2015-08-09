@@ -29,8 +29,8 @@
 
         .stats {
             position: absolute;
-            right: 150px;
-            top: 150px;
+            right: 160px;
+            top: 100px;
         }
 
         .stats th,

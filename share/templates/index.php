@@ -410,14 +410,30 @@ ob_start();
         </div>
 
         <div class="tab-pane fade" role="tabpanel" id="config">
-                <table class="table table-striped">
-                    <?php foreach ($view->getSettings() as $row): ?>
-                        <tr>
-                            <th><?php echo $row['config'] ?></th>
-                            <td><?php echo $row['value'] ?></td>
-                        </tr>
-                    <?php endforeach ?>
-                </table>
+            <div class="row">
+                <div class="col-xs-6">
+                    <table class="table table-striped">
+                        <?php foreach ($view->getSettings() as $row): ?>
+                            <tr>
+                                <th><a href="#" data-ini-setting="<?php echo $row['config'] ?>"><?php echo $row['config'] ?></a></th>
+                                <td><?php echo $row['value'] ?></td>
+                            </tr>
+                        <?php endforeach ?>
+                    </table>
+                </div>
+                <div class="col-xs-6">
+                    <div class="panel panel-default" style="position: fixed">
+                        <div class="panel-heading">
+                            <h3 class="panel-title" id="ini-setting-title">opcache.enable</h3>
+                        </div>
+                        <div class="panel-body" id="ini-setting-body">
+                            Enables the opcode cache. When disabled, code is not optimised or cached. The setting
+                            opcache.enable can not be enabled at runtime through ini_set(), it can only be disabled.
+                            Trying to enable it at in a script will generate a warning.
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="tab-pane fade" id="scripts" role="tabpanel">
@@ -467,8 +483,8 @@ ob_start();
 
         var dataset = <?php echo $view->getGraphDataSetJson(); ?>;
 
-        var width = 400,
-            height = 400,
+        var width = 300,
+            height = 300,
             radius = Math.min(width, height) / 2,
             colours = ['#B41F1F', '#1FB437', '#ff7f0e'];
 
@@ -636,7 +652,104 @@ ob_start();
                 var id = $(this).data('toggle-visible');
                 toggleVisible('#head-' + id, '#row-' + id);
             });
+
+            $('#config').find('a[data-ini-setting]').on('click', function(e) {
+                e.preventDefault();
+
+                var iniSetting = $(e.currentTarget).data('ini-setting');
+
+                if (typeof iniSettings[iniSetting] === 'object') {
+                    $('#ini-setting-title').html(iniSetting);
+                    $('#ini-setting-body').html(iniSettings[iniSetting].desc);
+                } else {
+                    alert('No entry found for setting ' + iniSetting)
+                }
+            });
         });
+
+        var iniSettings = {
+            'opcache.enable': {
+                'desc': 'Enables the opcode cache. When disabled, code is not optimised or cached. The setting opcache.enable can not be enabled at runtime through ini_set(), it can only be disabled. Trying to enable it at in a script will generate a warning.'
+            },
+            'opcache.enable_cli': {
+                'desc': 'Enables the opcode cache for the CLI version of PHP. This is mostly useful for testing and debugging.'
+            },
+            'opcache.memory_consumption': {
+                'desc': 'The size of the shared memory storage used by OPcache, in megabytes.'
+            },
+            'opcache.interned_strings_buffer': {
+                'desc': 'The amount of memory used to store interned strings, in megabytes. This configuration directive is ignored in PHP < 5.3.0.'
+            },
+            'opcache.max_accelerated_files': {
+                'desc': 'The maximum number of keys (and therefore scripts) in the OPcache hash table. The actual value used will be the first number in the set of prime numbers { 223, 463, 983, 1979, 3907, 7963, 16229, 32531, 65407, 130987 } that is bigger than the configured value. The minimum value is 200. The maximum value is 100000 in PHP < 5.5.6, and 1000000 in later versions.'
+            },
+            'opcache.max_wasted_percentage': {
+                'desc': 'The maximum percentage of wasted memory that is allowed before a restart is scheduled.'
+            },
+            'opcache.use_cwd': {
+                'desc': 'If enabled, OPcache appends the current working directory to the script key, thereby eliminating possible collisions between files with the same base name. Disabling this directive improves performance, but may break existing applications.'
+            },
+            'opcache.validate_timestamps': {
+                'desc': 'If enabled, OPcache will check for updated scripts every opcache.revalidate_freq seconds. When this directive is disabled, you must reset OPcache manually via opcache_reset(), opcache_invalidate() or by restarting the Web server for changes to the filesystem to take effect.'
+            },
+            'opcache.revalidate_freq': {
+                'desc': 'How often to check script timestamps for updates, in seconds. 0 will result in OPcache checking for updates on every request.<br><br>This configuration directive is ignored if opcache.validate_timestamps is disabled.'
+            },
+            'opcache.revalidate_path': {
+                'desc': 'If disabled, existing cached files using the same include_path will be reused. Thus, if a file with the same name is elsewhere in the include_path, it won\'t be found.'
+            },
+            'opcache.save_comments': {
+                'desc': 'If disabled, all documentation comments will be discarded from the opcode cache to reduce the size of the optimised code. Disabling this configuration directive may break applications and frameworks that rely on comment parsing for annotations, including Doctrine, Zend Framework 2 and PHPUnit.'
+            },
+            'opcache.load_comments': {
+                'desc': 'If disabled, documentation comments won\'t be loaded from the opcode cache even if they exist. This can be used with opcache.save_comments to only load comments for applications that require them.'
+            },
+            'opcache.fast_shutdown': {
+                'desc': 'If enabled, a fast shutdown sequence is used that doesn\'t free each allocated block, but relies on the Zend Engine memory manager to deallocate the entire set of request variables en masse.'
+            },
+            'opcache.enable_file_override': {
+                'desc': 'When enabled, the opcode cache will be checked for whether a file has already been cached when file_exists(), is_file() and is_readable() are called. This may increase performance in applications that check the existence and readability of PHP scripts, but risks returning stale data if opcache.validate_timestamps is disabled.'
+            },
+            'opcache.optimization_level': {
+                'desc': 'A bitmask that controls which optimisation passes are executed.'
+            },
+            'opcache.inherited_hack': {
+                'desc': 'In PHP < 5.3, OPcache stores the places where DECLARE_CLASS opcodes used inheritance; when the file is loaded, OPcache then tries to bind the inherited classes using the current environment. The problem is that while the DECLARE_CLASS opcode may not be needed for the current script, if the script requires that the opcode be defined, it may not run.<br><brThis configuration directive is ignored in PHP 5.3 and later.>'
+            },
+            'opcache.dups_fix': {
+                'desc': 'This hack should only be enabled to work around "Cannot redeclare class" errors.'
+            },
+            'opcache.blacklist_filename': {
+                'desc': 'The location of the OPcache blacklist file. A blacklist file is a text file containing the names of files that should not be accelerated, one per line. Wildcards are allowed, and prefixes can also be provided. Lines starting with a semi-colon are ignored as comments. <br><br>A simple blacklist file might look as follows:<br><br>; Matches a specific file. <br>/var/www/broken.php <br>; A prefix that matches all files starting with x. <br>/var/www/x <br>; A wildcard match. <br>/var/www/*-broken.php'
+            },
+            'opcache.max_file_size': {
+                'desc': 'The maximum file size that will be cached, in bytes. If this is 0, all files will be cached.'
+            },
+            'opcache.consistency_checks': {
+                'desc': 'If non-zero, OPcache will verify the cache checksum every N requests, where N is the value of this configuration directive. This should only be enabled when debugging, as it will impair performance.'
+            },
+            'opcache.force_restart_timeout': {
+                'desc': 'The length of time to wait for a scheduled restart to begin if the cache isn\'t active, in seconds. If the timeout is hit, then OPcache assumes that something is wrong and will kill the processes holding locks on the cache to permit a restart.<br><br>If opcache.log_verbosity_level is set to 3 or above, an error will be recorded in the error log when this occurs.'
+            },
+            'opcache.error_log': {
+                'desc': 'The error log for OPcache errors. An empty string is treated the same as stderr, and will result in logs being sent to standard error (which will be the Web server error log in most cases).'
+            },
+            'opcache.log_verbosity_level': {
+                'desc': 'The log verbosity level. By default, only fatal errors (level 0) and errors (level 1) are logged. Other levels available are warnings (level 2), information messages (level 3) and debug messages (level 4).'
+            },
+            'opcache.preferred_memory_model': {
+                'desc': 'The preferred memory model for OPcache to use. If left empty, OPcache will choose the most appropriate model, which is the correct behaviour in virtually all cases. <br><br>Possible values include mmap, shm, posix and win32.'
+            },
+            'opcache.protect_memory': {
+                'desc': 'Protects shared memory from unexpected writes while executing scripts. This is useful for internal debugging only.'
+            },
+            'opcache.mmap_base': {
+                'desc': 'The base used for shared memory segments on Windows. All PHP processes have to map shared memory into the same address space. Using this directive allows "Unable to reattach to base address" errors to be fixed.'
+            },
+            'opcache.restrict_api': {
+                'desc': 'Allows calling OPcache API functions only from PHP scripts which path is started from specified string. The default "" means no restriction.'
+            }
+        };
     </script>
 <?php
 $content = ob_get_clean();
